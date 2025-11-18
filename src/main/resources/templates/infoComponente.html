@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Componente - ' + ${componente.nombre}">Detalles del Componente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-dark text-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black shadow-lg fixed-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand fw-bold text-warning animate__animated animate__fadeInLeft" href="#">
+                <i class="bi bi-speedometer2 me-2"></i>
+                Escudería F1
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/garaje}">
+                            <i class="bi bi-car-front-fill"></i> Garaje
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/almacen}">
+                            <i class="bi bi-box-seam"></i> Almacén
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/carreras}">
+                            <i class="bi bi-flag-fill"></i> Carreras
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container py-5 mt-5">
+
+        <!-- Mensaje si no hay componente -->
+        <div th:if="${componente == null}" class="alert alert-danger text-center animate__animated animate__shakeX">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <strong>Error:</strong> No se encontró el componente solicitado.
+            <div class="mt-3">
+                <a th:href="@{/almacen}" class="btn btn-warning">
+                    <i class="bi bi-arrow-left me-2"></i> Volver al Almacén
+                </a>
+            </div>
+        </div>
+
+        <!-- Contenido del componente -->
+        <div th:if="${componente != null}">
+
+        <!-- Botón volver -->
+        <div class="mb-4 animate__animated animate__fadeInLeft">
+            <a th:href="@{/almacen}" class="btn btn-outline-warning">
+                <i class="bi bi-arrow-left me-2"></i> Volver al Almacén
+            </a>
+        </div>
+
+        <!-- Título -->
+        <div class="text-center mb-5 animate__animated animate__fadeInDown">
+            <h1 class="display-4 text-warning fw-bold mb-2" th:text="${componente.nombre}">Nombre del Componente</h1>
+            <div class="bg-warning mx-auto mb-3 rounded animate__animated animate__pulse animate__infinite" style="height: 4px; width: 100px;"></div>
+            <p class="lead text-muted">Información Detallada del Componente</p>
+        </div>
+
+        <div class="row g-4">
+            
+            <!-- Card Principal de Información -->
+            <div class="col-lg-8 animate__animated animate__fadeInUp">
+                <div class="card bg-black border-warning shadow-lg">
+                    <div class="card-header bg-dark text-warning fw-bold border-bottom border-warning">
+                        <i class="bi bi-info-circle-fill me-2"></i> Especificaciones Técnicas
+                    </div>
+                    <div class="card-body p-4">
+                        
+                        <!-- Tipo y Nombre -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="card bg-dark border-warning border-opacity-25 shadow-sm" style="transition: transform 0.3s ease;"
+                                     onmouseover="this.style.transform='translateX(10px)'" 
+                                     onmouseout="this.style.transform='translateX(0)'">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-warning text-dark me-3 fs-5"><i class="bi bi-tag-fill"></i></span>
+                                            <div>
+                                                <small class="text-muted d-block fw-semibold">TIPO</small>
+                                                <span class="fw-bold fs-5" th:text="${componente.tipo}">Tipo</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card bg-dark border-info border-opacity-25 shadow-sm" style="transition: transform 0.3s ease;"
+                                     onmouseover="this.style.transform='translateX(10px)'" 
+                                     onmouseout="this.style.transform='translateX(0)'">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-info text-dark me-3 fs-5"><i class="bi bi-hash"></i></span>
+                                            <div>
+                                                <small class="text-muted d-block fw-semibold">ID</small>
+                                                <span class="fw-bold fs-5" th:text="${componente.id}">ID</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Potencia y Estado -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="card bg-dark border-danger border-opacity-25 shadow-sm" style="transition: transform 0.3s ease;"
+                                     onmouseover="this.style.transform='translateX(10px)'" 
+                                     onmouseout="this.style.transform='translateX(0)'">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-danger me-3 fs-5"><i class="bi bi-lightning-fill"></i></span>
+                                            <div>
+                                                <small class="text-muted d-block fw-semibold">POTENCIA</small>
+                                                <span class="fw-bold fs-5"><span th:text="${componente.caballos}">0</span> CV</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card bg-dark border-success border-opacity-25 shadow-sm" style="transition: transform 0.3s ease;"
+                                     onmouseover="this.style.transform='translateX(10px)'" 
+                                     onmouseout="this.style.transform='translateX(0)'">
+                                    <div class="card-body p-3">
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge bg-success me-3 fs-5"><i class="bi bi-activity"></i></span>
+                                            <div>
+                                                <small class="text-muted d-block fw-semibold">ESTADO</small>
+                                                <span class="fw-bold fs-5"><span th:text="${#numbers.formatDecimal(componente.estado * 100, 0, 0)}">100</span>%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Progreso de Estado -->
+                        <div class="mb-4">
+                            <label class="form-label text-light fw-semibold mb-2">
+                                <i class="bi bi-speedometer2 me-2"></i>Estado del Componente
+                            </label>
+                            <div class="progress shadow" style="height: 30px;">
+                                <div class="progress-bar bg-success fw-bold fs-6 animate__animated animate__slideInLeft"
+                                     role="progressbar"
+                                     th:style="'width: ' + (${componente.estado} * 100) + '%'"
+                                     th:text="${#numbers.formatDecimal(componente.estado * 100, 0, 0)} + '%'">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Usos del Componente -->
+                        <div>
+                            <label class="form-label text-light fw-semibold mb-2">
+                                <i class="bi bi-clock-history me-2"></i>Uso del Componente
+                            </label>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted">Usos realizados</span>
+                                <span class="fw-bold" 
+                                      th:classappend="${(componente.vecesUsado / componente.limiteUsos) >= 0.8} ? 'text-danger' : (${(componente.vecesUsado / componente.limiteUsos) >= 0.5} ? 'text-warning' : 'text-success')">
+                                    <span th:text="${componente.vecesUsado}">0</span> / <span th:text="${componente.limiteUsos}">0</span>
+                                </span>
+                            </div>
+                            <div class="progress shadow" style="height: 30px;">
+                                <div class="progress-bar fw-bold fs-6 animate__animated animate__slideInLeft"
+                                     th:classappend="${(componente.vecesUsado / componente.limiteUsos) >= 0.8} ? 'bg-danger' : (${(componente.vecesUsado / componente.limiteUsos) >= 0.5} ? 'bg-warning' : 'bg-success')"
+                                     role="progressbar"
+                                     th:style="'width: ' + ((${componente.vecesUsado} * 100) / ${componente.limiteUsos}) + '%'"
+                                     th:text="${componente.vecesUsado} + ' / ' + ${componente.limiteUsos}">
+                                </div>
+                            </div>
+                            <small class="text-muted mt-2 d-block">
+                                <i class="bi bi-info-circle"></i> Quedan <span class="fw-bold" th:text="${componente.limiteUsos - componente.vecesUsado}">0</span> usos disponibles
+                            </small>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar de Estado -->
+            <div class="col-lg-4">
+                
+                <!-- Card de Estado Actual -->
+                <div class="card bg-black border-warning shadow-lg mb-4 animate__animated animate__fadeInRight">
+                    <div class="card-header bg-dark text-warning fw-bold border-bottom border-warning">
+                        <i class="bi bi-clipboard-check-fill me-2"></i> Estado Actual
+                    </div>
+                    <div class="card-body p-4 text-center">
+                        <div class="mb-4">
+                            <span class="badge px-4 py-3 fs-4 animate__animated animate__pulse animate__infinite"
+                                  th:classappend="${componente.coche != null} ? 'bg-danger' : 'bg-success'">
+                                <i th:class="${componente.coche != null ? 'bi bi-x-circle-fill' : 'bi bi-check-circle-fill'} me-2"></i>
+                                <span th:text="${componente.coche != null ? 'EN USO' : 'DISPONIBLE'}">Estado</span>
+                            </span>
+                        </div>
+                        
+                        <!-- Si está en uso -->
+                        <div th:if="${componente.coche != null}" class="alert alert-warning border-0 shadow-sm">
+                            <h6 class="fw-bold mb-2"><i class="bi bi-car-front-fill me-2"></i>Instalado en:</h6>
+                            <p class="mb-1 fs-5 fw-bold" th:text="${componente.coche.modelo}">Modelo</p>
+                            <small th:if="${componente.coche.piloto}" class="text-dark">
+                                Piloto: <span class="fw-bold" th:text="${componente.coche.piloto}"></span>
+                            </small>
+                        </div>
+                        
+                        <!-- Si está disponible -->
+                        <div th:if="${componente.coche == null}" class="alert alert-success border-0 shadow-sm">
+                            <i class="bi bi-check-circle fs-1 d-block mb-2"></i>
+                            <p class="mb-0 fw-bold">Listo para instalar</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card de Estadísticas -->
+                <div class="card bg-black border-info shadow-lg animate__animated animate__fadeInRight animate__delay-1s">
+                    <div class="card-header bg-dark text-info fw-bold border-bottom border-info">
+                        <i class="bi bi-graph-up-arrow me-2"></i> Estadísticas
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted small">Rendimiento</span>
+                                <span class="badge bg-info text-dark" th:text="${componente.caballos} + ' CV'">0 CV</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-info animate__animated animate__slideInLeft"
+                                     role="progressbar"
+                                     th:style="'width: ' + ((${componente.caballos} / 1000) * 100) + '%'">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted small">Condición</span>
+                                <span class="badge bg-success" th:text="${#numbers.formatDecimal(componente.estado * 100, 0, 0)} + '%'">100%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-success animate__animated animate__slideInLeft"
+                                     role="progressbar"
+                                     th:style="'width: ' + (${componente.estado} * 100) + '%'">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted small">Vida Útil</span>
+                                <span class="badge" 
+                                      th:classappend="${(componente.vecesUsado / componente.limiteUsos) >= 0.8} ? 'bg-danger' : (${(componente.vecesUsado / componente.limiteUsos) >= 0.5} ? 'bg-warning text-dark' : 'bg-success')"
+                                      th:text="${#numbers.formatDecimal(((componente.limiteUsos - componente.vecesUsado) * 100) / componente.limiteUsos, 0, 0)} + '%'">
+                                    100%
+                                </span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar animate__animated animate__slideInLeft"
+                                     th:classappend="${(componente.vecesUsado / componente.limiteUsos) >= 0.8} ? 'bg-danger' : (${(componente.vecesUsado / componente.limiteUsos) >= 0.5} ? 'bg-warning' : 'bg-success')"
+                                     role="progressbar"
+                                     th:style="'width: ' + (((${componente.limiteUsos} - ${componente.vecesUsado}) * 100) / ${componente.limiteUsos}) + '%'">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="text-center mt-5 animate__animated animate__fadeInUp">
+            <a th:href="@{/almacen}" class="btn btn-warning btn-lg px-5 shadow-lg">
+                <i class="bi bi-arrow-left-circle me-2"></i> Volver al Almacén
+            </a>
+        </div>
+
+        </div> <!-- Fin div condicional th:if componente != null -->
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-black text-warning text-center py-4 mt-5 shadow-lg border-top border-warning animate__animated animate__fadeInUp">
+        <div class="container">
+            <p class="mb-0">
+                <i class="bi bi-box-seam me-2"></i>
+                <strong>Almacén F1</strong> - Sistema de Inventario
+            </p>
+            <small class="text-muted">Powered by Bootstrap 5 & Animate.css</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

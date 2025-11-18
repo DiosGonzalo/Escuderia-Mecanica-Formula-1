@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Añadir Nuevo Coche</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Estilos generales */
+        .text-shadow {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+        /* Color de fondo oscuro y degradado para F1 */
+        .bg-f1-dark {
+            background-color: #121212; 
+        }
+    </style>
+</head>
+
+<body class="bg-dark text-light" style="background: url('/images/fondo.jpg') center/cover fixed no-repeat;">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-black bg-opacity-75 fixed-top shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-warning" th:href="@{/dashboard}">🏎️ Escudería F1</a>
+        </div>
+    </nav>
+
+    <div class="container py-5 mt-5">
+
+        <h1 class="fw-bolder text-warning display-4 mb-4 ps-3">Añadir Nuevo Coche ➕</h1>
+        <hr class="border-warning opacity-75">
+
+        <form th:action="@{/garaje/nuevo/crear}" th:object="${coche}" method="post" class="needs-validation" novalidate>
+            
+            <div class="row g-4">
+
+                
+                <div class="card bg-dark border-success shadow p-3 mb-4">
+                    <h3 class="text-success mb-3">Sugerencias Automáticas (Mejores Builds) 🤖</h3>
+
+                    <div th:if="${mejoresCoches != null}">
+                        
+                        <div th:each="build, iter : ${mejoresCoches}" 
+                            class="mb-3 p-3 border border-success rounded">
+
+                            <h5 class="text-success">Build #[[${iter.index + 1}]]</h5>
+
+                            <ul class="text-light">
+                                <li th:each="comp : ${build}">
+                                    <span th:text="${comp.nombre}"></span>  
+                                    <small class="text-secondary">
+                                        (Tipo: <span th:text="${comp.tipo}"></span>,
+                                        +<span th:text="${comp.caballos}"></span> CV,
+                                        Peso: <span th:text="${comp.peso}"></span>)
+                                    </small>
+                                </li>
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-lg-5">
+                    <div class="card bg-f1-dark border-warning shadow-lg p-3 h-100">
+                        <h3 class="card-title text-warning mb-4">Información del Chasis</h3>
+                        
+                        <div class="mb-3">
+                            <label for="modelo" class="form-label text-warning">Modelo del Coche</label>
+                            <input type="text" th:field="*{modelo}" class="form-control bg-dark text-light border-warning" id="modelo" required>
+                            <div class="invalid-feedback">
+                                El modelo es obligatorio.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="piloto" class="form-label text-warning">Piloto Asignado</label>
+                            <input type="text" th:field="*{piloto}" class="form-control bg-dark text-light border-warning" id="piloto">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="potencia" class="form-label text-warning">Potencia Base (CV)</label>
+                            <input type="text" th:field="*{potencia}" class="form-control bg-dark text-light border-warning" id="potencia" required>
+                            <div class="form-text text-secondary">Esta es la potencia del chasis base, sin sumar componentes.</div>
+                            <div class="invalid-feedback">
+                                La potencia base es obligatoria.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="imagen" class="form-label text-warning">URL de la Imagen</label>
+                            <input type="url" th:field="*{imagen}" class="form-control bg-dark text-light border-warning" id="imagen">
+                        </div>
+                        
+                        <div th:if="${#fields.hasErrors('componentes')}" class="alert alert-danger mt-3">
+                            <span th:errors="*{componentes}">Error de componentes</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="card bg-f1-dark border-info shadow-lg p-3">
+                        <h3 class="card-title text-info mb-4">Selección de Componentes Iniciales (Almacén) 🔩</h3>
+                        <p class="text-secondary">Seleccione un componente de cada tipo para instalarlo en el nuevo coche. Solo se muestran los componentes disponibles en el almacén.</p>
+                        
+                        <div class="row">
+
+                            <div class="row">
+                                <div th:each="tipo, stat : ${tipos}" class="col-md-6 mb-3">
+                                    <label th:for="${'comp-' + tipo}" class="form-label text-light fw-bold">1. Elegir <span th:text="${tipo}"></span></label>
+                                    
+                                    <select 
+                                        th:id="${'comp-' + tipo}" 
+                                        name="componenteIds" 
+                                        class="form-select bg-dark text-light border-info" 
+                                        required>
+                                        
+                                        <option value="">-- Seleccione un componente --</option>
+                                        
+                                        <option th:each="comp : ${componentes}"
+                                                th:if="${comp.tipo == tipo}" 
+                                                th:value="${comp.id}"
+                                                th:text="${comp.nombre} + ' (+' + ${comp.caballos} + ' CV, ' + ${comp.limiteUsos} + ' usos)'">
+                                        </option>
+                                        
+                                    </select>
+                                    <div class="invalid-feedback">Debe seleccionar un componente de tipo <span th:text="${tipo}"></span>.</div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <hr class="border-warning opacity-75 my-4">
+
+            <div class="d-flex justify-content-end gap-2">
+                <a th:href="@{/garaje}" class="btn btn-secondary py-2 px-4 shadow">Cancelar</a>
+                <button type="submit" class="btn btn-warning py-2 px-4 fw-bold shadow">
+                    Guardar y Montar Coche 🏁
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function () {
+          'use strict'
+          var forms = document.querySelectorAll('.needs-validation')
+          Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+              form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+              }, false)
+            })
+        })()
+    </script>
+</body>
+</html>
