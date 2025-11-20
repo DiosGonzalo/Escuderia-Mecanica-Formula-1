@@ -1,57 +1,47 @@
 package com.salesianostriana.dam.escuderiagonzalodios.servicios.clasesExtra;
 
 import com.salesianostriana.dam.escuderiagonzalodios.models.Coche;
+import com.salesianostriana.dam.escuderiagonzalodios.models.Componente;
 import com.salesianostriana.dam.escuderiagonzalodios.models.Dto.CocheDto;
+
+import java.util.Arrays;
 
 public class PerformanceCoche {
 
+    // --- CONSTANTES FÍSICAS (Eran la fuente del error) ---
+    public static final double GRAVEDAD = 9.81;
+    public static final double DENSIDAD_AIRE = 1.225;
+    public static final double CABALLOS_A_WATTS = 745.7;
+    public static final double COEF_FRICCION_ASFALTO = 0.95;
+    public static final double MASA_BASE_COCHE = 750.0;
 
-    //Constantes fisicas
-    private static final double gravedad = 9.81;
-    private static final double densidad_aire = 1.225; // uso la del aire a nivel del mar y $15º porque como me tenga que poner a calcular eso ya me tiro
-    private static final double caballosAW = 745.7;
-    private static final double coeficiente_friccion = 0.9;
-    private static final double masaBaseCoche = 750; //la masa minima del chasis que despues tendre que sumarle la de los componentes
+    // --- FACTORES DE MODELADO ---
+    public static final double FACTOR_DEGRADACION_ESTADO = -0.015;
+    public static final double COEF_FACTOR_CURVAS = -0.8;
+    public static final double PENALIZACION_DESBALANCE = 2000.0;
+    public static final double LAMBDA_BASE_EVENTOS = 0.015; // Añadida constante faltante
 
-    //Factores que afectan al coche
-    //mirar coef curva
-    private static final double degradacionComponente = -0.015;
-    private static final double coefCurvas = -0.8;
-    private static final double desbalance = 2000.0;
+    public CocheDto calcularMetricas(Coche coche) {
 
-
-    public CocheDto calcularMetricas(Coche coche){
-
-        //que tengo que calcular
-        //La masa total, La potencia total en wats porque es la unidad estandar
-        //aerodinamica, el promedio de los componentes para la performance del coche, si esta mal se reduce la potencia
-        //Area frontal y coef drag es para la resistencia del viento
-
-        double potenciaW,areaFrontal, coefDrag,estadoPromedio, masaTotal, downforce, drag;
-
-        masaTotal = masaBaseCoche + coche.getComponentes().stream()
-                .mapToDouble(n -> n.getPeso())
+        double masaTotal = MASA_BASE_COCHE + coche.getComponentes().stream()
+                .mapToDouble(Componente::getPeso)
                 .sum();
 
-        potenciaW = (coche.getPotencia())*caballosAW;
+        double potenciaW = coche.getPotencia() * CABALLOS_A_WATTS;
 
-        estadoPromedio = coche.getComponentes().stream()
-                .mapToDouble(c -> c.getEstado())
+        double estadoPromedio = coche.getComponentes().stream()
+                .mapToDouble(Componente::getEstado)
                 .average()
                 .orElse(100.0);
 
-        drag = coche.getComponentes().stream()
-                .mapToDouble(c->c.getDrag()).sum();
-        downforce = coche.getComponentes().stream()
-                .mapToDouble(c->c.getDownforce()).sum();
+        double drag = coche.getComponentes().stream()
+                .mapToDouble(Componente::getDrag).sum();
+        double downforce = coche.getComponentes().stream()
+                .mapToDouble(Componente::getDownforce).sum();
 
-
-        //formula drag  Fdrag = 0.5 * p *Cd * A *V.mathpoy(2) / al cuadrado para los no programadores
-        //Coeficiente drag y area frontal
-        // asumo un area base de 1.5
-        // el coeficiente de un "buen coche" es de 0.25 a 0.35 por lo que 0.3
-        areaFrontal = 1.5 + (drag*0.01);  // A
-        coefDrag = 0.3 +(drag*0.005);   //Cd
+        // CÁLCULO FÍSICO AERODINÁMICO
+        double areaFrontal = 1.5 + (drag * 0.01);
+        double coefDrag = 0.3 + (drag * 0.005);
 
         return CocheDto.builder()
                 .areaFrontal(areaFrontal)
@@ -64,10 +54,12 @@ public class PerformanceCoche {
 
 
     }
-
-
-
-
-
-
 }
+
+
+
+
+
+
+
+

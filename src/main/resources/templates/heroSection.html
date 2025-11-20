@@ -3,29 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Bienvenida</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Escudería SIM - Bienvenida</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
+        /* F1 DIGITAL HUD THEME */
+        :root {
+            --f1-red: #FF2A2A;
+            --carbon-dark: #0F0F0F;
+            --carbon-light: #1A1A1A;
+            --accent-blue: #00BFFF;
+        }
 
         body {
-            /* 1. Establecer el tamaño y la distribución del cuerpo */
+            /* Fondo de imagen de coche F1 (placeholder) */
+            background-image: url('https://fotos.perfil.com/2020/08/10/f1-999409.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0; /* Asegura que no haya márgenes por defecto */
-
-            /* 2. Configuración del Fondo de Imagen (Ajustado) */
-            background-image: url('/HeroSection.jpg'); /* RUTA CORREGIDA */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-
-            /* 3. Crea el Overlay oscuro semitransparente SOBRE la imagen */
-            position: relative;
+            margin: 0;
+            overflow: hidden; /* Ocultar scroll si la imagen es grande */
         }
 
-        /* Crea un elemento pseudo para el overlay */
+        /* Overlay semi-transparente para alto contraste */
         body::before {
             content: '';
             position: absolute;
@@ -33,42 +38,53 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* Color negro con 50% de transparencia (semitransparente) */
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: -1; /* Colócalo debajo del contenido principal */
+            background-color: rgba(15, 15, 15, 0.7); /* Carbon dark overlay */
+            backdrop-filter: blur(5px); /* Efecto blur sutil */
+            z-index: -1;
         }
 
         .contenido {
-            /* Estilos para el texto y el botón */
             color: white;
-            padding: 3rem;
+            padding: 4rem;
             text-align: center;
-            /* Si la imagen adjunta es más minimalista, quitamos el fondo del div 'contenido' */
-            /* background-color: rgba(0, 0, 0, 0.7);  <-- Descomenta esto si quieres un fondo detrás solo del texto */
-            border-radius: 10px;
-            /* Animación simple para dar un efecto moderno */
-            opacity: 0;
-            animation: fadeIn 1s forwards;
+            background-color: rgba(0, 0, 0, 0.6); /* Fondo semi-transparente para el texto */
+            border-radius: 15px;
+            border: 2px solid var(--accent-blue);
+            box-shadow: 0 0 30px rgba(255, 42, 42, 0.4); /* Glow Rojo */
+            animation: fadeIn 1.5s forwards;
         }
 
         @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-f1 {
+            background-color: var(--f1-red);
+            color: var(--carbon-dark);
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn-f1:hover {
+            background-color: var(--accent-blue);
+            color: var(--carbon-dark);
+            box-shadow: 0 0 15px var(--accent-blue);
         }
     </style>
 </head>
 <body>
 <div class="contenido">
-    <h1 class="display-1 fw-bold mb-3">Escuderia F1</h1>
-    <p class="lead mb-5">
-        Acceder a tu panel de control.
+    <h1 class="display-1 fw-black mb-3">
+        <span class="text-f1-red">ESCUDERÍA F1</span> <span class="text-accent-blue">SIM</span>
+    </h1>
+    <p class="lead mb-5 text-white-50">
+        Simulación Avanzada de Gestión y Dinámica de Vehículos F1.
     </p>
-    <a th:href="@{/dashboard}" class="btn btn-light btn-lg shadow-lg">
-        DashBoard
+    <a th:href="@{/dashboard}" class="btn btn-f1 btn-lg shadow-lg">
+        <i class="bi bi-speedometer2 me-2"></i> IR AL DASHBOARD
     </a>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard de Simulación</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <style>
+        /* F1 DIGITAL HUD THEME */
+        :root {
+            --f1-red: #FF2A2A;
+            --carbon-dark: #0F0F0F;
+            --carbon-light: #1A1A1A;
+            --accent-blue: #00BFFF; /* Cian futurista */
+        }
+        body {
+            background-color: var(--carbon-dark);
+            color: #EAEAEA;
+            font-family: 'Inter', sans-serif;
+            padding-top: 70px;
+        }
+        .text-f1-red { color: var(--f1-red); }
+        .bg-f1-red { background-color: var(--f1-red); }
+        .border-f1-red { border-color: var(--f1-red) !important; }
+        .text-accent-blue { color: var(--accent-blue); }
+        .bg-accent-blue-dark { background-color: #006b8b; }
+
+        /* Contenedor de Detalles (Bordes cortados para look angular) */
+        .details-box {
+            background-color: var(--carbon-light);
+            border-left: 5px solid var(--accent-blue);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.15);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+        }
+
+        /* Estilo para tablas de resultados (GRID / Holográfico) */
+        .table-f1 {
+            --bs-table-bg: var(--carbon-light);
+            --bs-table-striped-bg: #1f1f1f;
+            --bs-table-hover-bg: #292929;
+            color: #f0f0f0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .table-f1 th {
+            background-color: rgba(0, 191, 255, 0.1); /* Fondo cian para headers */
+            color: var(--accent-blue);
+            border-bottom: 2px solid var(--accent-blue);
+            text-transform: uppercase;
+        }
+        .table-f1 td.winner-glow {
+            box-shadow: inset 0 0 10px rgba(255, 42, 42, 0.5); /* Glow para el ganador */
+        }
+
+        /* Animación para el botón de simulación (Más brillante) */
+        .sim-button {
+            animation: pulse-red 1.5s infinite;
+        }
+        .sim-button:hover {
+            animation: none;
+            box-shadow: 0 0 15px var(--f1-red);
+        }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(255, 42, 42, 0.8); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 42, 42, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 42, 42, 0); }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Navbar F1 Style -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top shadow-lg border-bottom border-accent-blue">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold text-accent-blue fs-4 tracking-wider" th:href="@{/carreras}">
+            &lt;&lt; DASHBOARD
+        </a>
+        <span class="navbar-text text-white fw-bold fs-5 uppercase" th:text="${detallesCarrera.nombre}">NOMBRE DE CARRERA</span>
+    </div>
+</nav>
+
+<div class="container py-5">
+
+    <!-- HEADER Y TÍTULO -->
+    <h1 class="fw-bolder text-white display-5 mb-2">
+        <span class="text-f1-red">SIMULACIÓN</span> DE <span class="text-accent-blue">EVENTO</span>
+    </h1>
+    <p class="fs-6 text-white-50 mb-4">
+        <span th:text="${detallesCarrera.nombre}"></span> - <span th:text="${detallesCarrera.vueltas}"></span> Vueltas
+    </p>
+
+    <!-- Bloque de DETALLES y botón de simulación -->
+    <div class="row mb-5 details-box">
+        <div class="col-md-8">
+            <h3 class="text-f1-red fw-bold mb-3">CONDICIONES DEL CIRCUITO</h3>
+            <p class="text-white"><i class="bi bi-geo-alt-fill text-accent-blue"></i> **Longitud:** <span th:text="${detallesCarrera.longitudCircuito} ? ${detallesCarrera.longitud_circuito} + ' km' : 'Desconocida'">5.0 km</span></p>
+            <p class="text-white"><i class="bi bi-cloud-rain-fill text-accent-blue"></i> **Clima:** <span th:text="${detallesCarrera.clima}">SECO</span></p>
+            <p class="text-white"><i class="bi bi-people-fill text-accent-blue"></i> **Pilotos:** <span th:each="coche : ${detallesCarrera.coches}"><span class="badge bg-secondary me-1" th:text="${coche}"></span></span></p>
+        </div>
+
+        <div class="col-md-4 d-flex justify-content-end align-items-center">
+
+            <!-- Formulario POST para simular la carrera -->
+            <form th:action="@{/carreras/{id}/simular(id=${carreraId})}" method="post"
+                  th:if="${resultadoCarrera == null}">
+                <button type="submit" class="btn bg-f1-red text-dark fw-bold sim-button rounded-lg px-5 py-3 fs-5 uppercase tracking-widest shadow-xl">
+                    <i class="bi bi-flag-fill me-2"></i> INICIAR SIMULACIÓN
+                </button>
+            </form>
+
+            <!-- Mensaje si la simulación ya se ejecutó -->
+            <div th:unless="${resultadoCarrera == null}" class="alert bg-success text-dark p-3 rounded-lg shadow-lg text-center fw-bold">
+                ✅ DATOS CARGADOS
+            </div>
+        </div>
+    </div>
+
+    <!-- ---------------------------------------------------- -->
+    <!-- RESULTADOS DE LA SIMULACIÓN -->
+    <!-- ---------------------------------------------------- -->
+
+    <div th:if="${resultadoCarrera != null}">
+        <h2 class="fw-bolder text-f1-red display-6 mb-4 mt-5 border-bottom border-accent-blue pb-2">PODIUM Y TIEMPOS</h2>
+
+        <!-- Ganador y Resumen -->
+        <div class="p-5 mb-5 bg-black rounded-xl shadow-2xl border-f1-red border-4 text-center">
+            <p class="text-2xl text-white mb-2 uppercase tracking-widest">P1 / GANADOR</p>
+            <h3 class="display-3 fw-black text-f1-red mb-3" th:text="${resultadoCarrera.ganador.piloto}">PILOTO GANADOR</h3>
+            <p class="text-xl text-white">TIEMPO FINAL: <span class="fw-bold text-accent-blue" th:text="${#numbers.formatDecimal(resultadoCarrera.ganador.tiempoTotal, 0, 3)} + 's'">0.000s</span></p>
+        </div>
+
+        <!-- TABLA DE CLASIFICACIÓN -->
+        <h3 class="text-white fw-bold mb-3 mt-4 text-accent-blue">CLASIFICACIÓN DETALLADA</h3>
+        <div class="table-responsive rounded-xl shadow-2xl">
+            <table class="table table-f1 table-hover table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">POS</th>
+                    <th scope="col">PILOTO</th>
+                    <th scope="col">COCHE</th>
+                    <th scope="col">TIEMPO TOTAL</th>
+                    <th scope="col">VUELTAS</th>
+                    <th scope="col">ESTADO</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="res, stat : ${resultadoCarrera.resultados}">
+                    <td class="fw-bold" th:text="${stat.index + 1}">1</td>
+                    <td th:text="${res.piloto}">Piloto X</td>
+                    <td th:text="${res.coche}">Coche Modelo</td>
+
+                    <!-- Formato de tiempo o DNF -->
+                    <td th:if="${!res.retirado}" th:classappend="${stat.index == 0} ? 'text-f1-red fw-bolder winner-glow' : 'text-accent-blue fw-bold'" th:text="${#numbers.formatDecimal(res.tiempoTotal, 0, 3)} + 's'">0.000s</td>
+                    <td th:unless="${!res.retirado}" class="text-muted fw-bold">DNF</td>
+
+                    <td th:text="${res.vueltasCompletadas}">0</td>
+
+                    <!-- Estado (Terminó o Abandonó) -->
+                    <td th:if="${!res.retirado}" class="text-success fw-bold"><i class="bi bi-check-circle"></i> TERMINADO</td>
+                    <td th:unless="${!res.retirado}" class="text-warning fw-bold"><i class="bi bi-x-octagon-fill"></i> <span th:text="${res.motivoRetiro}">ABANDONO</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- LOG DE EVENTOS -->
+        <h3 class="text-white fw-bold mt-5 mb-3 text-f1-red">LOG DE INCIDENTES</h3>
+        <div class="list-group rounded-xl shadow-2xl border-accent-blue border">
+            <div th:each="evento : ${resultadoCarrera.eventos}" class="list-group-item bg-carbon-light text-warning border-gray-700">
+                <span class="badge bg-f1-red text-dark me-2">VUELTA <span th:text="${evento.vuelta}">0</span></span>
+                <span class="fw-bold text-white" th:text="${evento.coche.piloto}">Piloto X</span>:
+                <span th:text="${evento.descripcion}">Descripción del fallo</span>
+            </div>
+            <div th:if="${#lists.isEmpty(resultadoCarrera.eventos)}" class="list-group-item bg-carbon-light text-success fw-bold">
+                <i class="bi bi-hand-thumbs-up-fill"></i> CARRERA LIMPIA.
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

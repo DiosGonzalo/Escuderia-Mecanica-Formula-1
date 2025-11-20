@@ -3,168 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="'Componente - ' + ${componente.nombre}">Detalles del Componente</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
+
+    <style>
+        /* F1 DIGITAL HUD THEME */
+        :root {
+            --f1-red: #FF2A2A;
+            --carbon-dark: #0F0F0F;
+            --carbon-light: #1A1A1A;
+            --accent-blue: #00BFFF;
+        }
+        body {
+            background-color: var(--carbon-dark);
+            color: #EAEAEA;
+            font-family: 'Inter', sans-serif;
+            padding-top: 70px;
+        }
+        .text-f1-red { color: var(--f1-red); }
+        .bg-f1-red { background-color: var(--f1-red); }
+        .border-f1-red { border-color: var(--f1-red) !important; }
+        .text-accent-blue { color: var(--accent-blue); }
+        .bg-accent-blue { background-color: var(--accent-blue); }
+
+        /* Estilo de Tarjeta Principal */
+        .card-inner-f1 {
+            background-color: var(--carbon-light);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .card-inner-f1:hover {
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
+            border-color: var(--accent-blue) !important;
+        }
+        /* Estilo para los bloques de info */
+        .info-block {
+            background-color: #1a1a1a;
+            border-left: 4px solid var(--f1-red);
+            transition: transform 0.3s ease;
+        }
+        .info-block.blue { border-left-color: var(--accent-blue); }
+        .info-block:hover { transform: translateX(5px); }
+
+        /* Estilos de progreso */
+        .progress-bar-f1 {
+            height: 30px;
+            background-color: var(--carbon-dark);
+        }
+        .progress-bar-f1 .progress-bar {
+            transition: width 1s ease-out;
+        }
+    </style>
 </head>
 
-<body class="bg-dark text-light">
+<body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-black shadow-lg fixed-top">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand fw-bold text-warning animate__animated animate__fadeInLeft" href="#">
-                <i class="bi bi-speedometer2 me-2"></i>
-                Escudería F1
+<!-- Navbar F1 Style -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-black shadow-lg fixed-top border-bottom border-f1-red">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand fw-bold text-f1-red fs-4 animate__animated animate__fadeInLeft" th:href="@{/dashboard}">
+            <i class="bi bi-speedometer2 me-2"></i> ESCUDERÍA SIM
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/dashboard}">DASHBOARD</a></li>
+                <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/garaje}">GARAJE</a></li>
+                <li class="nav-item"><a class="nav-link active text-accent-blue border-bottom border-accent-blue" th:href="@{/almacen}">ALMACÉN</a></li>
+                <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/carreras}">CARRERAS</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Contenido principal -->
+<div class="container py-5 mt-5">
+
+    <!-- Mensaje si no hay componente -->
+    <div th:if="${componente == null}" class="alert alert-danger text-center animate__animated animate__shakeX border-f1-red bg-carbon-light">
+        <i class="bi bi-exclamation-triangle-fill me-2 text-f1-red fs-4"></i>
+        <strong>ERROR:</strong> No se encontró el componente solicitado.
+        <div class="mt-3">
+            <a th:href="@{/almacen}" class="btn bg-f1-red text-dark fw-bold">
+                <i class="bi bi-arrow-left me-2"></i> Volver al Almacén
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/dashboard}">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/garaje}">
-                            <i class="bi bi-car-front-fill"></i> Garaje
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/almacen}">
-                            <i class="bi bi-box-seam"></i> Almacén
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/carreras}">
-                            <i class="bi bi-flag-fill"></i> Carreras
-                        </a>
-                    </li>
-                </ul>
-            </div>
         </div>
-    </nav>
+    </div>
 
-    <!-- Contenido principal -->
-    <div class="container py-5 mt-5">
-
-        <!-- Mensaje si no hay componente -->
-        <div th:if="${componente == null}" class="alert alert-danger text-center animate__animated animate__shakeX">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <strong>Error:</strong> No se encontró el componente solicitado.
-            <div class="mt-3">
-                <a th:href="@{/almacen}" class="btn btn-warning">
-                    <i class="bi bi-arrow-left me-2"></i> Volver al Almacén
-                </a>
-            </div>
-        </div>
-
-        <!-- Contenido del componente -->
-        <div th:if="${componente != null}">
+    <!-- Contenido del componente -->
+    <div th:if="${componente != null}">
 
         <!-- Botón volver -->
         <div class="mb-4 animate__animated animate__fadeInLeft">
-            <a th:href="@{/almacen}" class="btn btn-outline-warning">
-                <i class="bi bi-arrow-left me-2"></i> Volver al Almacén
+            <a th:href="@{/almacen}" class="btn btn-outline-light border-accent-blue text-accent-blue fw-bold">
+                <i class="bi bi-arrow-left me-2"></i> VOLVER AL INVENTARIO
             </a>
         </div>
 
         <!-- Título -->
         <div class="text-center mb-5 animate__animated animate__fadeInDown">
-            <h1 class="display-4 text-warning fw-bold mb-2" th:text="${componente.nombre}">Nombre del Componente</h1>
-            <div class="bg-warning mx-auto mb-3 rounded animate__animated animate__pulse animate__infinite" style="height: 4px; width: 100px;"></div>
-            <p class="lead text-muted">Información Detallada del Componente</p>
+            <h1 class="display-4 text-white fw-bold mb-2" th:text="${componente.nombre}">Nombre del Componente</h1>
+            <div class="bg-accent-blue mx-auto mb-3 rounded animate__animated animate__pulse animate__infinite" style="height: 4px; width: 180px;"></div>
+            <p class="lead text-light-50">ESPECIFICACIONES DEL COMPONENTE (<span class="text-f1-red fw-bold" th:text="${componente.tipo}"></span>)</p>
         </div>
 
         <div class="row g-4">
-            
+
             <!-- Card Principal de Información -->
             <div class="col-lg-8 animate__animated animate__fadeInUp">
-                <div class="card bg-black border-warning shadow-lg">
-                    <div class="card-header bg-dark text-warning fw-bold border-bottom border-warning">
-                        <i class="bi bi-info-circle-fill me-2"></i> Especificaciones Técnicas
+                <div class="card card-inner-f1 shadow-lg border-f1-red">
+                    <div class="card-header bg-black text-f1-red fw-bold border-bottom border-f1-red">
+                        <i class="bi bi-info-circle-fill me-2"></i> ESPECIFICACIONES TÉCNICAS Y DE SIMULACIÓN
                     </div>
                     <div class="card-body p-4">
-                        
-                        <!-- Tipo y Nombre -->
+
+                        <!-- Bloques de Rendimiento y Tipos -->
                         <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <div class="card bg-dark border-warning border-opacity-25 shadow-sm" style="transition: transform 0.3s ease;"
-                                     onmouseover="this.style.transform='translateX(10px)'" 
-                                     onmouseout="this.style.transform='translateX(0)'">
-                                    <div class="card-body p-3">
-                                        <div class="d-flex align-items-center">
-                                            <span class="badge bg-warning text-dark me-3 fs-5"><i class="bi bi-tag-fill"></i></span>
-                                            <div>
-                                                <small class="text-muted d-block fw-semibold">TIPO</small>
-                                                <span class="fw-bold fs-5" th:text="${componente.tipo}">Tipo</span>
-                                            </div>
-                                        </div>
+                            <div class="col-md-4">
+                                <div class="info-block p-3 rounded shadow-sm">
+                                    <span class="badge bg-f1-red text-dark me-3 fs-5"><i class="bi bi-tag-fill"></i></span>
+                                    <div>
+                                        <small class="text-muted d-block fw-semibold">TIPO</small>
+                                        <span class="fw-bold fs-5 text-accent-blue" th:text="${componente.tipo}">Tipo</span>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="col-md-6">
-                                <div class="card bg-dark border-info border-opacity-25 shadow-sm" style="transition: transform 0.3s ease;"
-                                     onmouseover="this.style.transform='translateX(10px)'" 
-                                     onmouseout="this.style.transform='translateX(0)'">
-                                    <div class="card-body p-3">
-                                        <div class="d-flex align-items-center">
-                                            <span class="badge bg-info text-dark me-3 fs-5"><i class="bi bi-hash"></i></span>
-                                            <div>
-                                                <small class="text-muted d-block fw-semibold">ID</small>
-                                                <span class="fw-bold fs-5" th:text="${componente.id}">ID</span>
-                                            </div>
-                                        </div>
+
+                            <div class="col-md-4">
+                                <div class="info-block p-3 rounded shadow-sm" style="border-left-color: var(--f1-red);">
+                                    <span class="badge bg-f1-red me-3 fs-5"><i class="bi bi-lightning-fill"></i></span>
+                                    <div>
+                                        <small class="text-muted d-block fw-semibold">POTENCIA/REND.</small>
+                                        <span class="fw-bold fs-5 text-white"><span th:text="${componente.caballos}">0</span> CV</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="info-block p-3 rounded shadow-sm blue">
+                                    <span class="badge bg-accent-blue text-dark me-3 fs-5"><i class="bi bi-arrow-down-circle-fill"></i></span>
+                                    <div>
+                                        <small class="text-muted d-block fw-semibold">DOWNFORCE</small>
+                                        <span class="fw-bold fs-5 text-white"><span th:text="${componente.downforce}">0</span> N</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Potencia y Estado -->
+                        <!-- Bloques de DRAG y GRIP -->
                         <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <div class="card bg-dark border-danger border-opacity-25 shadow-sm" style="transition: transform 0.3s ease;"
-                                     onmouseover="this.style.transform='translateX(10px)'" 
-                                     onmouseout="this.style.transform='translateX(0)'">
-                                    <div class="card-body p-3">
-                                        <div class="d-flex align-items-center">
-                                            <span class="badge bg-danger me-3 fs-5"><i class="bi bi-lightning-fill"></i></span>
-                                            <div>
-                                                <small class="text-muted d-block fw-semibold">POTENCIA</small>
-                                                <span class="fw-bold fs-5"><span th:text="${componente.caballos}">0</span> CV</span>
-                                            </div>
-                                        </div>
+                            <div class="col-md-4">
+                                <div class="info-block p-3 rounded shadow-sm">
+                                    <span class="badge bg-f1-red me-3 fs-5"><i class="bi bi-wind"></i></span>
+                                    <div>
+                                        <small class="text-muted d-block fw-semibold">RESISTENCIA (DRAG)</small>
+                                        <span class="fw-bold fs-5 text-white" th:text="${componente.drag}">0</span>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="col-md-6">
-                                <div class="card bg-dark border-success border-opacity-25 shadow-sm" style="transition: transform 0.3s ease;"
-                                     onmouseover="this.style.transform='translateX(10px)'" 
-                                     onmouseout="this.style.transform='translateX(0)'">
-                                    <div class="card-body p-3">
-                                        <div class="d-flex align-items-center">
-                                            <span class="badge bg-success me-3 fs-5"><i class="bi bi-activity"></i></span>
-                                            <div>
-                                                <small class="text-muted d-block fw-semibold">ESTADO</small>
-                                                <span class="fw-bold fs-5"><span th:text="${#numbers.formatDecimal(componente.estado * 100, 0, 0)}">100</span>%</span>
-                                            </div>
-                                        </div>
+
+                            <div class="col-md-4">
+                                <div class="info-block p-3 rounded shadow-sm blue">
+                                    <span class="badge bg-accent-blue text-dark me-3 fs-5"><i class="bi bi-grip-horizontal"></i></span>
+                                    <div>
+                                        <small class="text-muted d-block fw-semibold">GRIP SECO</small>
+                                        <span class="fw-bold fs-5 text-white" th:text="${componente.gripSeco}">0.0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="info-block p-3 rounded shadow-sm">
+                                    <span class="badge bg-f1-red me-3 fs-5"><i class="bi bi-cloud-rain-fill"></i></span>
+                                    <div>
+                                        <small class="text-muted d-block fw-semibold">GRIP LLUVIA</small>
+                                        <span class="fw-bold fs-5 text-white" th:text="${componente.gripLluvia}">0.0</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Progreso de Estado -->
-                        <div class="mb-4">
+
+                        <!-- PROGRESO DE ESTADO -->
+                        <div class="mb-4 border-top border-secondary pt-4">
                             <label class="form-label text-light fw-semibold mb-2">
-                                <i class="bi bi-speedometer2 me-2"></i>Estado del Componente
+                                <i class="bi bi-heart-pulse me-2 text-f1-red"></i> ESTADO ACTUAL DEL COMPONENTE (Simulación)
                             </label>
-                            <div class="progress shadow" style="height: 30px;">
-                                <div class="progress-bar bg-success fw-bold fs-6 animate__animated animate__slideInLeft"
+                            <div class="progress progress-bar-f1 shadow">
+                                <div class="progress-bar fw-bold fs-6 animate__animated animate__slideInLeft"
+                                     th:classappend="${componente.estado >= 0.8 ? 'bg-success' : (componente.estado >= 0.5 ? 'bg-warning text-dark' : 'bg-danger')}"
                                      role="progressbar"
                                      th:style="'width: ' + (${componente.estado} * 100) + '%'"
                                      th:text="${#numbers.formatDecimal(componente.estado * 100, 0, 0)} + '%'">
@@ -172,28 +203,28 @@
                             </div>
                         </div>
 
-                        <!-- Usos del Componente -->
+                        <!-- PROGRESO DE USO -->
                         <div>
                             <label class="form-label text-light fw-semibold mb-2">
-                                <i class="bi bi-clock-history me-2"></i>Uso del Componente
+                                <i class="bi bi-clock-history me-2 text-accent-blue"></i> USO DEL COMPONENTE (Vida Útil)
                             </label>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="text-muted">Usos realizados</span>
-                                <span class="fw-bold" 
-                                      th:classappend="${(componente.vecesUsado / componente.limiteUsos) >= 0.8} ? 'text-danger' : (${(componente.vecesUsado / componente.limiteUsos) >= 0.5} ? 'text-warning' : 'text-success')">
+                                <span class="fw-bold"
+                                      th:classappend="${(componente.vecesUsado / componente.limiteUsos) >= 0.8 ? 'text-f1-red' : (${(componente.vecesUsado / componente.limiteUsos) >= 0.5} ? 'text-warning' : 'text-success')}">
                                     <span th:text="${componente.vecesUsado}">0</span> / <span th:text="${componente.limiteUsos}">0</span>
                                 </span>
                             </div>
-                            <div class="progress shadow" style="height: 30px;">
+                            <div class="progress progress-bar-f1 shadow">
                                 <div class="progress-bar fw-bold fs-6 animate__animated animate__slideInLeft"
-                                     th:classappend="${(componente.vecesUsado / componente.limiteUsos) >= 0.8} ? 'bg-danger' : (${(componente.vecesUsado / componente.limiteUsos) >= 0.5} ? 'bg-warning' : 'bg-success')"
+                                     th:classappend="${(componente.vecesUsado / componente.limiteUsos) >= 0.8 ? 'bg-danger' : (${(componente.vecesUsado / componente.limiteUsos) >= 0.5} ? 'bg-warning' : 'bg-success')}"
                                      role="progressbar"
                                      th:style="'width: ' + ((${componente.vecesUsado} * 100) / ${componente.limiteUsos}) + '%'"
                                      th:text="${componente.vecesUsado} + ' / ' + ${componente.limiteUsos}">
                                 </div>
                             </div>
                             <small class="text-muted mt-2 d-block">
-                                <i class="bi bi-info-circle"></i> Quedan <span class="fw-bold" th:text="${componente.limiteUsos - componente.vecesUsado}">0</span> usos disponibles
+                                <i class="bi bi-info-circle"></i> Quedan <span class="fw-bold text-accent-blue" th:text="${componente.limiteUsos - componente.vecesUsado}">0</span> usos disponibles
                             </small>
                         </div>
 
@@ -203,86 +234,72 @@
 
             <!-- Sidebar de Estado -->
             <div class="col-lg-4">
-                
+
                 <!-- Card de Estado Actual -->
-                <div class="card bg-black border-warning shadow-lg mb-4 animate__animated animate__fadeInRight">
-                    <div class="card-header bg-dark text-warning fw-bold border-bottom border-warning">
-                        <i class="bi bi-clipboard-check-fill me-2"></i> Estado Actual
+                <div class="card card-inner-f1 shadow-lg mb-4 animate__animated animate__fadeInRight border-accent-blue">
+                    <div class="card-header bg-black text-accent-blue fw-bold border-bottom border-accent-blue">
+                        <i class="bi bi-clipboard-check-fill me-2"></i> ESTADO DE ASIGNACIÓN
                     </div>
                     <div class="card-body p-4 text-center">
                         <div class="mb-4">
                             <span class="badge px-4 py-3 fs-4 animate__animated animate__pulse animate__infinite"
-                                  th:classappend="${componente.coche != null} ? 'bg-danger' : 'bg-success'">
+                                  th:classappend="${componente.coche != null} ? 'bg-f1-red text-dark' : 'bg-success text-dark'">
                                 <i th:class="${componente.coche != null ? 'bi bi-x-circle-fill' : 'bi bi-check-circle-fill'} me-2"></i>
                                 <span th:text="${componente.coche != null ? 'EN USO' : 'DISPONIBLE'}">Estado</span>
                             </span>
                         </div>
-                        
+
                         <!-- Si está en uso -->
-                        <div th:if="${componente.coche != null}" class="alert alert-warning border-0 shadow-sm">
-                            <h6 class="fw-bold mb-2"><i class="bi bi-car-front-fill me-2"></i>Instalado en:</h6>
+                        <div th:if="${componente.coche != null}" class="alert bg-f1-red text-dark border-0 shadow-sm fw-bold">
+                            <h6 class="fw-bold mb-2 text-dark"><i class="bi bi-car-front-fill me-2"></i>INSTALADO EN:</h6>
                             <p class="mb-1 fs-5 fw-bold" th:text="${componente.coche.modelo}">Modelo</p>
                             <small th:if="${componente.coche.piloto}" class="text-dark">
                                 Piloto: <span class="fw-bold" th:text="${componente.coche.piloto}"></span>
                             </small>
+                            <div class="mt-3">
+                                <a th:href="@{/garaje/{id}(id=${componente.coche.id})}" class="btn btn-dark btn-sm fw-bold">
+                                    VER COCHE
+                                </a>
+                            </div>
                         </div>
-                        
+
                         <!-- Si está disponible -->
-                        <div th:if="${componente.coche == null}" class="alert alert-success border-0 shadow-sm">
+                        <div th:if="${componente.coche == null}" class="alert bg-success text-dark border-0 shadow-sm">
                             <i class="bi bi-check-circle fs-1 d-block mb-2"></i>
-                            <p class="mb-0 fw-bold">Listo para instalar</p>
+                            <p class="mb-0 fw-bold">LISTO PARA INSTALAR EN CUALQUIER VEHÍCULO</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card de Estadísticas -->
-                <div class="card bg-black border-info shadow-lg animate__animated animate__fadeInRight animate__delay-1s">
-                    <div class="card-header bg-dark text-info fw-bold border-bottom border-info">
-                        <i class="bi bi-graph-up-arrow me-2"></i> Estadísticas
+                <!-- Card de Estadísticas de Simulación -->
+                <div class="card card-inner-f1 shadow-lg animate__animated animate__fadeInRight animate__delay-1s border-f1-red">
+                    <div class="card-header bg-black text-f1-red fw-bold border-bottom border-f1-red">
+                        <i class="bi bi-graph-up-arrow me-2"></i> IMPACTO EN LA SIMULACIÓN
                     </div>
                     <div class="card-body p-4">
-                        <div class="mb-3">
+
+                        <div class="mb-3 border-bottom border-secondary pb-3">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-muted small">Rendimiento</span>
-                                <span class="badge bg-info text-dark" th:text="${componente.caballos} + ' CV'">0 CV</span>
+                                <span class="text-muted small">Masa (Peso)</span>
+                                <span class="badge bg-accent-blue text-dark"><span th:text="${componente.peso}"></span> KG</span>
                             </div>
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar bg-info animate__animated animate__slideInLeft"
-                                     role="progressbar"
-                                     th:style="'width: ' + ((${componente.caballos} / 1000) * 100) + '%'">
-                                </div>
-                            </div>
+                            <small class="text-light-50 d-block">Impacta en la inercia y resistencia a la rodadura.</small>
                         </div>
-                        
-                        <div class="mb-3">
+
+                        <div class="mb-3 border-bottom border-secondary pb-3">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-muted small">Condición</span>
-                                <span class="badge bg-success" th:text="${#numbers.formatDecimal(componente.estado * 100, 0, 0)} + '%'">100%</span>
+                                <span class="text-muted small">Drag (Resistencia al Aire)</span>
+                                <span class="badge bg-f1-red text-dark" th:text="${componente.drag}">0.0</span>
                             </div>
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar bg-success animate__animated animate__slideInLeft"
-                                     role="progressbar"
-                                     th:style="'width: ' + (${componente.estado} * 100) + '%'">
-                                </div>
-                            </div>
+                            <small class="text-light-50 d-block">Afecta negativamente a la Vmax del coche.</small>
                         </div>
-                        
+
                         <div>
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="text-muted small">Vida Útil</span>
-                                <span class="badge" 
-                                      th:classappend="${(componente.vecesUsado / componente.limiteUsos) >= 0.8} ? 'bg-danger' : (${(componente.vecesUsado / componente.limiteUsos) >= 0.5} ? 'bg-warning text-dark' : 'bg-success')"
-                                      th:text="${#numbers.formatDecimal(((componente.limiteUsos - componente.vecesUsado) * 100) / componente.limiteUsos, 0, 0)} + '%'">
-                                    100%
-                                </span>
+                                <span class="text-muted small">Probabilidad de Fallo</span>
+                                <span class="badge bg-warning text-dark">Weibull Model</span>
                             </div>
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar animate__animated animate__slideInLeft"
-                                     th:classappend="${(componente.vecesUsado / componente.limiteUsos) >= 0.8} ? 'bg-danger' : (${(componente.vecesUsado / componente.limiteUsos) >= 0.5} ? 'bg-warning' : 'bg-success')"
-                                     role="progressbar"
-                                     th:style="'width: ' + (((${componente.limiteUsos} - ${componente.vecesUsado}) * 100) / ${componente.limiteUsos}) + '%'">
-                                </div>
-                            </div>
+                            <small class="text-light-50 d-block">Controlada por el 'Límite de Usos' (<span class="fw-bold" th:text="${componente.limiteUsos}"></span>).</small>
                         </div>
                     </div>
                 </div>
@@ -293,27 +310,27 @@
 
         <!-- Botones de acción -->
         <div class="text-center mt-5 animate__animated animate__fadeInUp">
-            <a th:href="@{/almacen}" class="btn btn-warning btn-lg px-5 shadow-lg">
-                <i class="bi bi-arrow-left-circle me-2"></i> Volver al Almacén
+            <a th:href="@{/almacen}" class="btn bg-f1-red text-dark btn-lg px-5 shadow-lg fw-bold">
+                <i class="bi bi-arrow-left-circle me-2"></i> VOLVER AL INVENTARIO
             </a>
         </div>
 
-        </div> <!-- Fin div condicional th:if componente != null -->
-
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-black text-warning text-center py-4 mt-5 shadow-lg border-top border-warning animate__animated animate__fadeInUp">
-        <div class="container">
-            <p class="mb-0">
-                <i class="bi bi-box-seam me-2"></i>
-                <strong>Almacén F1</strong> - Sistema de Inventario
-            </p>
-            <small class="text-muted">Powered by Bootstrap 5 & Animate.css</small>
-        </div>
-    </footer>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Footer -->
+<footer class="bg-black text-f1-red text-center py-4 mt-5 shadow-lg border-top border-f1-red animate__animated animate__fadeInUp">
+    <div class="container">
+        <p class="mb-0">
+            <i class="bi bi-box-seam me-2"></i>
+            <strong>ALMACÉN F1</strong> - Detalles del Componente
+        </p>
+        <small class="text-muted">Powered by Bootstrap 5 & Animate.css</small>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

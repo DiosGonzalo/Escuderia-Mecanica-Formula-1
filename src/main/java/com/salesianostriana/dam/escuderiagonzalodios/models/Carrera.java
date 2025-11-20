@@ -26,6 +26,7 @@ public class Carrera {
     @Enumerated(EnumType.STRING)
     private Dificultad dificultad;
     private Long numeroVueltas;
+    private double longitudCircuito;
     @Enumerated (EnumType.STRING)
     private Clima clima;
     @ManyToMany (cascade = {CascadeType.PERSIST,CascadeType.MERGE})
