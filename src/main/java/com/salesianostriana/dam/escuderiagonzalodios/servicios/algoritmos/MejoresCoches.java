@@ -48,8 +48,8 @@ public class MejoresCoches {
         //cojemos los atributos de la lista de componentes que nos ha dado el metodo de antes y le damos una puntuacion, que sera la puntuacion de esa build
         estado /= componentes.size();
 
-        return (potencia * 0.6) + (downforce * 0.3) + (estado * 0.2)
-                - (peso * 0.4) - (drag * 0.3);
+        return ((potencia * 0.61) + (downforce * 0.25) + (estado * 0.23)
+                - (peso * 0.37) - (drag * 0.3))*10;
     }
 
     //Aqui cogemos la lista de elementos que hemso creado, de manera aleatoria elegimos un componente a cambiar y dentro de ese tipo uno aleatorio y se lo metemos
@@ -106,9 +106,9 @@ public class MejoresCoches {
         int tamPoblacion,
         int cantidadCoches) {
 
-    // 1. Crear población inicial aleatoria MÁS GRANDE
+    // 1. Crear población inicial aleatoria
     List<List<Componente>> poblacion = new ArrayList<>();
-    for (int i = 0; i < tamPoblacion * 2; i++) { // Población más grande para más diversidad
+    for (int i = 0; i < tamPoblacion * 2; i++) {
         poblacion.add(generarConfiguracionAleatoria(porTipo));
     }
 
