@@ -45,15 +45,30 @@ public class CarreraController {
      * Genera desgaste y resultados.
      */
     @PostMapping("/carreras/{id}/simular")
-    public String simularCarrera(@PathVariable Long id, Model model) {
+    public String simularCarrera(@PathVariable String id, Model model) {
 
-        // Correr simulación
-        Map<String, Object> resultadoSimulacion = carreraService.correrCarrera(id);
+        try {
+            // 1. CONVERSIÓN DE TIPO (Crucial)
+            Long idCarrera = Long.parseLong(id);
 
-        // Poner resultados
-        model.addAttribute("resultadoCarrera", resultadoSimulacion);
+            // 2. Lógica de simulación (pasamos el Long)
+            var resultado = carreraService.correrCarrera(idCarrera);
+            model.addAttribute("resultadoCarrera", resultado);
 
-        // Mostrar vista
-        return "detalleCarreras";
+            // 3. Recuperar detalles estáticos (pasamos el Long)
+            var detalles = carreraService.obtenerDetallesIniciales(idCarrera);
+            model.addAttribute("detallesCarrera", detalles);
+
+            model.addAttribute("carreraId", id); // El ID en string para la URL si hace falta
+
+            return "detalleCarreras";
+
+        } catch (NumberFormatException e) {
+            // Si el ID no es un número válido
+            return "redirect:/carreras?error=id_invalido";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error"; // O tu página de error
+        }
     }
 }

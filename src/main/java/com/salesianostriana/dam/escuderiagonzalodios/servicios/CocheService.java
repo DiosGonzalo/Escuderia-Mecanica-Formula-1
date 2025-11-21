@@ -34,16 +34,13 @@ public class CocheService {
 
 
     public String estadoCoche(Long id){
-        // El método buscarPorId garantiza que 'coche' no es null o lanza una excepción antes.
         List<Componente> componentes  = buscarPorId(id).getComponentes();
 
-        // Si el coche existe, pero no tiene componentes, manejar el caso de división por cero
         if (componentes == null || componentes.isEmpty()) {
             return "Sin componentes"; // O la lógica que desees para este caso
         }
 
         double desgasteComponentes = 0;
-        // ... tu lógica de cálculo ...
         for(Componente componente : componentes){
             desgasteComponentes+= componente.getEstado();
         }

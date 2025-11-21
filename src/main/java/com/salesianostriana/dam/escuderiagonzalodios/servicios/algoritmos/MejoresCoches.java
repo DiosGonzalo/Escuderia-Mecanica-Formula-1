@@ -23,7 +23,6 @@ public class MejoresCoches {
 
     public List<Componente> generarConfiguracionAleatoria(Map<TipoComponente, List<Componente>> porTipo) {
 
-        //Creo una lista de componentes aleatorios, par aun coche, como no se pueden repetir cojo un componente de cada tipo, el map seria asi motor = [motor 1, y asi]
         List<Componente> configuracion = new ArrayList<>();
 
         for (List<Componente> componentes : porTipo.values()) {
@@ -99,20 +98,18 @@ public class MejoresCoches {
 
         return hijos;
     }
-    //Creamos muchos coches con el primer metodo, filtro los mejores, a los mejores les hace cambios y los vuelve a filtrar y despues de muchos cambios te da los mejores
+    //Creamos muchos coches con el primer metodo, filtro los mejores, a los mejores les hago cambios y los vuelve a filtrar y despues de muchos cambios te da los mejores
     public List<List<Componente>> optimizarConAlgGenetico(
             Map<TipoComponente,List<Componente>> porTipo,
         int generaciones,
         int tamPoblacion,
         int cantidadCoches) {
 
-    // 1. Crear población inicial aleatoria
     List<List<Componente>> poblacion = new ArrayList<>();
     for (int i = 0; i < tamPoblacion * 2; i++) {
         poblacion.add(generarConfiguracionAleatoria(porTipo));
     }
 
-    // 2. Evolucionar durante N generaciones
     for(int gen = 0; gen < generaciones; gen++) {
         poblacion.sort(Comparator.comparingDouble(this::evaluarConfiguraciones).reversed());
 
@@ -126,10 +123,8 @@ public class MejoresCoches {
         poblacion = nuevaPoblacion;
     }
 
-    // 3. Ordenar resultado final
     poblacion.sort(Comparator.comparingDouble(this::evaluarConfiguraciones).reversed());
 
-    // 4. FORZAR DIVERSIDAD: Seleccionar coches únicos y diferentes
     List<List<Componente>> cochesUnicos = new ArrayList<>();
     Set<String> configuracionesVistas = new HashSet<>();
 
@@ -146,7 +141,6 @@ public class MejoresCoches {
         }
     }
 
-    // 5. Si no hay suficientes coches únicos, añadir variaciones forzadas
     while (cochesUnicos.size() < cantidadCoches && cochesUnicos.size() > 0) {
         List<Componente> base = cochesUnicos.get(random.nextInt(cochesUnicos.size()));
         List<Componente> variacion = crearVariacionForzada(base, porTipo);
@@ -164,7 +158,6 @@ public class MejoresCoches {
     private List<Componente> crearVariacionForzada(List<Componente> original, Map<TipoComponente, List<Componente>> porTipo) {
     List<Componente> copia = new ArrayList<>(original);
     
-    // Cambiar MÍNIMO 2 componentes para asegurar diferencia
     int mutaciones = 3 + random.nextInt(2); // Entre 2 y 3 componentes
     Set<Integer> indicesCambiados = new HashSet<>();
     
@@ -175,7 +168,6 @@ public class MejoresCoches {
             TipoComponente tipo = copia.get(indexCambiado).getTipo();
             List<Componente> posibles = porTipo.get(tipo);
             
-            // Asegurarse de elegir un componente DIFERENTE al actual
             Componente actual = copia.get(indexCambiado);
             List<Componente> alternativas = new ArrayList<>(posibles);
             alternativas.remove(actual);

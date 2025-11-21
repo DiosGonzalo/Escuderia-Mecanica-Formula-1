@@ -1,6 +1,5 @@
 package com.salesianostriana.dam.escuderiagonzalodios.servicios;
 
-
 import com.salesianostriana.dam.escuderiagonzalodios.models.Carrera;
 import com.salesianostriana.dam.escuderiagonzalodios.models.Coche;
 import com.salesianostriana.dam.escuderiagonzalodios.models.Dto.AccidenteDto;
@@ -10,6 +9,7 @@ import com.salesianostriana.dam.escuderiagonzalodios.repositorios.CarreraReposit
 import com.salesianostriana.dam.escuderiagonzalodios.repositorios.CocheRepository;
 import com.salesianostriana.dam.escuderiagonzalodios.servicios.clasesExtra.PerformanceCoche;
 import com.salesianostriana.dam.escuderiagonzalodios.servicios.clasesExtra.SimuladorCarrera;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,24 +18,20 @@ import java.util.stream.Collectors;
 @Service
 public class CarreraService {
 
+    @Autowired
     PerformanceCoche performanceCoche;
+
     private CarreraRepository repo;
     private CocheRepository cocheRepo;
 
+    @Autowired
     SimuladorCarrera simulador;
-    private static final double GRAVEDAD = 9.81;
-    private static final double DENSIDAD_AIRE = 1.225;
-    private static final double COEF_FRICCION_ASFALTO = 0.95;
 
-
-
-
-
-    private Random rnd = new Random();
-
-    public CarreraService(CarreraRepository repo) {
+    public CarreraService(CarreraRepository repo, CocheRepository cocheRepo) {
         this.repo = repo;
+        this.cocheRepo = cocheRepo;
     }
+
     public List<Carrera> todasCarreras(){
         return repo.findAll().stream()
                 .collect(Collectors.toList());
@@ -55,51 +51,41 @@ public class CarreraService {
 
     public Map<String, Object> obtenerDetallesIniciales(Long carreraId) {
         Carrera carrera = repo.findById(carreraId)
-                .orElseThrow(() -> new RuntimeException("Carrera no encontrada")); // Buscar carrera
+                .orElseThrow(() -> new RuntimeException("Carrera no encontrada"));
 
         Map<String, Object> detalles = new HashMap<>();
-        detalles.put("nombre", carrera.getNombre()); // Nombre
-        detalles.put("vueltas", carrera.getNumeroVueltas()); // Total vueltas
-        detalles.put("clima", carrera.getClima().name()); // Clima
+        detalles.put("nombre", carrera.getNombre());
+        detalles.put("vueltas", carrera.getNumeroVueltas());
+        detalles.put("clima", carrera.getClima().name());
+        detalles.put("longitudCircuito", carrera.getLongitudCircuito());
         detalles.put("coches", carrera.getCoches().stream()
                 .map(Coche::getModelo)
-                .collect(Collectors.toList())); // Lista coches
+                .collect(Collectors.toList()));
         return detalles;
     }
 
     private Map<Coche, EstadoCarreraDto> inicializarEstados(List<Coche> coches) {
-        // Uso del API Stream de Java 8 para inicializar el estado de cada coche
         return coches.stream()
                 .collect(Collectors.toMap(c -> c, EstadoCarreraDto::new));
     }
 
     private boolean todosRetirados(Map<Coche, EstadoCarreraDto> estados) {
-        // Uso del API Stream: verifica si TODOS los valores cumplen la condición
         return estados.values().stream().allMatch(EstadoCarreraDto::isRetirado);
     }
 
     public Map<String, Object> correrCarrera(Long carreraId){
-
         Carrera carrera = repo.findById(carreraId).orElseThrow();
         List<Coche> coches = new ArrayList<>(carrera.getCoches());
 
-        // 2. Inicialización del Estado (Asigna EstadoCarrera a cada Coche)
         Map<Coche, EstadoCarreraDto> estados = inicializarEstados(coches);
-        List<AccidenteDto> eventos = new ArrayList<>(); // Lista global para registrar incidentes
+        List<AccidenteDto> eventos = new ArrayList<>();
 
-        // 3. Bucle Principal de Simulación
         for (int vuelta = 1; vuelta <= carrera.getNumeroVueltas(); vuelta++) {
-
-            // Simular la dinámica de la vuelta para cada coche
             simularVuelta(vuelta, estados, carrera, eventos);
-
-            // Si todos los coches han abandonado, terminamos la carrera
             if (todosRetirados(estados)) break;
         }
 
-        // 4. Construir y Devolver Resultados
         return construirResultadoFinal(carrera, estados, eventos);
-
     }
 
     private void simularVuelta(int vuelta, Map<Coche, EstadoCarreraDto> estados,
@@ -111,45 +97,29 @@ public class CarreraService {
 
             if (estado.isRetirado()) continue;
 
-            // --- 1. CÁLCULO DE MÉTRICAS Y TIEMPO ---
             CocheDto metrics = performanceCoche.calcularMetricas(coche);
 
-            // Llamada al método de simulación (corregido para usar la instancia 'simulador')
             double tiempo = simulador.calcularTiempoVuelta(coche, metrics, carrera, vuelta, estado);
 
-            // --- 2. ACTUALIZACIÓN DE ESTADO (Corregido el uso del Setter) ---
             estado.getTiemposVuelta().add(tiempo);
             estado.setTiempoTotal(estado.getTiempoTotal() + tiempo);
             estado.setVueltasCompletadas(estado.getVueltasCompletadas() + 1);
 
-            // --- 3. GESTIÓN DE DESGASTE Y FALLOS ---
             simulador.aplicarDesgasteFisico(coche, carrera);
             simulador.verificarFallos(coche, estado, vuelta, eventos);
-
-            // c) Persistir los cambios del coche (estados de los componentes)
-            // if (!estado.isRetirado()) {
-            //    repo.save(coche); // NECESITAS LA INSTANCIA DE REPO
-            // }
         }
     }
-
-    // ----------------------------------------------------
-    // METODO AUXILIAR: CONSTRUCCIÓN DEL RESULTADO FINAL
-    // ----------------------------------------------------
 
     private Map<String, Object> construirResultadoFinal(Carrera carrera,
                                                         Map<Coche, EstadoCarreraDto> estados,
                                                         List<AccidenteDto> eventos) {
 
-        // 1. Ordenar los resultados:
         List<Map<String, Object>> resultados = estados.entrySet().stream()
-                // Ordenar por retirado (false < true) y luego por tiempoTotal
                 .sorted(Comparator.comparing((Map.Entry<Coche, EstadoCarreraDto> e) -> e.getValue().isRetirado())
-                        .thenComparing(e -> e.getValue().getTiempoTotal())) // Usar getTiempoTotal()
+                        .thenComparing(e -> e.getValue().getTiempoTotal()))
                 .map(e -> construirResultadoCoche(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
 
-        // 2. Construir el objeto final
         Map<String, Object> resultado = new HashMap<>();
         resultado.put("carrera", carrera.getNombre());
         resultado.put("resultados", resultados);
@@ -159,25 +129,38 @@ public class CarreraService {
         return resultado;
     }
 
-    // ----------------------------------------------------
-    // METODO AUXILIAR: CONSTRUCCIÓN DEL RESULTADO POR COCHE
-    // ----------------------------------------------------
-
     private Map<String, Object> construirResultadoCoche(Coche coche, EstadoCarreraDto estado) {
         Map<String, Object> r = new HashMap<>();
         r.put("coche", coche.getModelo());
         r.put("piloto", coche.getPiloto());
-        r.put("tiempoTotal", estado.getTiempoTotal()); // Usar getTiempoTotal()
         r.put("retirado", estado.isRetirado());
         r.put("motivoRetiro", estado.getMotivoRetiro());
+        r.put("vueltasCompletadas", estado.getVueltasCompletadas());
+        r.put("tiempoTotal", estado.getTiempoTotal()); // Se mantiene para ordenación interna si hace falta
 
-        // Aquí podrías añadir la lógica para calcular y añadir la 'mejorVuelta' y la 'consistencia'
+        // Formateo Tiempo Total (Horas)
+        r.put("tiempoTotalTexto", formatearTiempoTotal(estado.getTiempoTotal()));
+
+        // Cálculo y Formateo Tiempo Promedio (Minutos)
+        double promedio = 0.0;
+        if (estado.getVueltasCompletadas() > 0) {
+            promedio = estado.getTiempoTotal() / estado.getVueltasCompletadas();
+        }
+        r.put("tiempoPromedioTexto", formatearTiempoVuelta(promedio));
 
         return r;
     }
 
+    private String formatearTiempoTotal(double totalSegundos) {
+        int horas = (int) (totalSegundos / 3600);
+        int minutos = (int) ((totalSegundos % 3600) / 60);
+        double segundos = totalSegundos % 60;
+        return String.format("%dh %02dm %06.3fs", horas, minutos, segundos);
+    }
 
-
-
-
+    private String formatearTiempoVuelta(double segundos) {
+        int minutos = (int) (segundos / 60);
+        double segs = segundos % 60;
+        return String.format("%d:%06.3f", minutos, segs);
+    }
 }
