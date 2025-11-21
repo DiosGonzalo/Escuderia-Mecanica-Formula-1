@@ -28,4 +28,8 @@ public class Coche {
     @ToString.Exclude
     @Builder.Default
     private List<Componente> componentes = new ArrayList<>();
+
+
+
+
 }

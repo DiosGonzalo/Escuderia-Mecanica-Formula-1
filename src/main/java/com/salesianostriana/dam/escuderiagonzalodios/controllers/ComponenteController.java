@@ -1,6 +1,5 @@
 package com.salesianostriana.dam.escuderiagonzalodios.controllers;
 
-
 import com.salesianostriana.dam.escuderiagonzalodios.models.Componente;
 import com.salesianostriana.dam.escuderiagonzalodios.models.Enums.TipoComponente;
 import com.salesianostriana.dam.escuderiagonzalodios.servicios.ComponenteService;
@@ -16,12 +15,11 @@ import java.util.List;
 @Controller
 public class ComponenteController {
 
+    private final ComponenteService componenteService;
 
-    ComponenteService componenteService;
     public ComponenteController(ComponenteService componenteService) {
         this.componenteService = componenteService;
     }
-
 
     @GetMapping("/almacen")
     public String getMethodName(Model model) {
@@ -30,35 +28,31 @@ public class ComponenteController {
         return "almacen";
     }
 
-
     @PostMapping("/almacen/buscarNombre")
     public String buscarPorNombre(@RequestParam("nombre") String nombre, Model model) {
-
         List<Componente> componentes = componenteService.buscarPorNombre(nombre);
         model.addAttribute("componentes", componentes);
         return "almacen";
     }
 
-    @PostMapping("almacen/filtrar/tipo")
+    @PostMapping("/almacen/filtrar/tipo")
     public String filtrarTipo(@RequestParam("tipo") TipoComponente tipo, Model model) {
         List<Componente> componentesFiltrados = componenteService.filtrarPorTipo(tipo);
         model.addAttribute("componentes", componentesFiltrados);
         return "almacen";
     }
 
-    @PostMapping("almacen/ordenarUsosMayor")
+    @PostMapping("/almacen/ordenarUsosMayor")
     public String ordenarMayor(Model model) {
         List<Componente> componentes = componenteService.ordenarUsosMasMenos();
         model.addAttribute("componentes", componentes);
-
         return "almacen";
     }
 
     @PostMapping("/almacen/ordenarUsosMenor")
     public String ordenarMenor(Model model) {
-        List<Componente> componentes =  componenteService.ordenarUsosMenosMas();
+        List<Componente> componentes = componenteService.ordenarUsosMenosMas();
         model.addAttribute("componentes", componentes);
-
         return "almacen";
     }
 
@@ -71,7 +65,7 @@ public class ComponenteController {
 
     @GetMapping("/almacen/componente/{id}")
     public String getComponenteDetalle(@PathVariable Long id, Model model) {
-        Componente componente = componenteService.buscarPorId(id);
+        Componente componente = componenteService.findById(id);
 
         if (componente == null) {
             return "redirect:/almacen";
@@ -84,6 +78,6 @@ public class ComponenteController {
     @PostMapping("/almacen/eliminar/{id}")
     public String eliminarComponente(@RequestParam Long id) {
         componenteService.eliminar(id);
-        return "almacen";
+        return "redirect:/almacen";
     }
 }

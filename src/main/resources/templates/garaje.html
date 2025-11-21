@@ -2,63 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:if="${coche != null}" th:text="'Garaje - ' + ${coche.modelo}">Garaje - Detalles</title>
-    <title th:unless="${coche != null}">Garaje - Coche no encontrado</title>
+    <title th:if="${coche != null}" th:text="'Garaje - ' + ${coche.modelo}">Garaje</title>
+    <title th:unless="${coche != null}">Garaje - No encontrado</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" rel="stylesheet">
-
-    <style>
-        /* F1 DIGITAL HUD THEME */
-        :root {
-            --f1-red: #FF2A2A;
-            --carbon-dark: #0F0F0F;
-            --carbon-light: #1A1A1A;
-            --accent-blue: #00BFFF;
-        }
-        body {
-            background-color: var(--carbon-dark);
-            color: #EAEAEA;
-            font-family: 'Inter', sans-serif;
-            padding-top: 70px;
-        }
-        .text-f1-red { color: var(--f1-red); }
-        .bg-f1-red { background-color: var(--f1-red); }
-        .border-f1-red { border-color: var(--f1-red) !important; }
-        .text-accent-blue { color: var(--accent-blue); }
-        .bg-accent-blue { background-color: var(--accent-blue); }
-        .card-inner-f1 {
-            background-color: var(--carbon-light);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-        }
-        .card-inner-f1:hover {
-            box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
-            border-color: var(--accent-blue) !important;
-        }
-        .list-group-item.active {
-            background-color: var(--f1-red) !important;
-            border-color: var(--f1-red) !important;
-            color: var(--carbon-dark) !important;
-        }
-        .info-list-item {
-            background-color: #1a1a1a;
-            border-left: 4px solid var(--accent-blue);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .info-list-item:hover {
-            transform: translateX(5px);
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
-        }
-    </style>
 </head>
 
-<body>
+<body class="bg-light">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-black shadow-lg fixed-top border-bottom border-f1-red">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold text-f1-red animate__animated animate__fadeInLeft fs-4" href="#">
+        <a class="navbar-brand" href="#">
             <i class="bi bi-speedometer2 me-2"></i> ESCUDERÍA SIM
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -66,423 +21,259 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/dashboard}">DASHBOARD</a></li>
-                <li class="nav-item"><a class="nav-link active text-accent-blue border-bottom border-accent-blue" aria-current="page" th:href="@{/garaje}">GARAJE</a></li>
-                <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/almacen}">ALMACÉN</a></li>
-                <li class="nav-item"><a class="nav-link text-white-50" th:href="@{/carreras}">CARRERAS</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/dashboard}">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link active" th:href="@{/garaje}">Garaje</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/almacen}">Almacén</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/carreras}">Carreras</a></li>
             </ul>
         </div>
     </div>
 </nav>
 
-<div class="container-fluid py-5 mt-5">
+<div class="container">
 
-    <div class="text-center mb-5 animate__animated animate__fadeInDown">
-        <h1 class="display-3 fw-bold text-white mb-2" th:text="${coche?.modelo} ?: 'Coche no encontrado'">Detalles del Coche</h1>
-        <div class="bg-f1-red mx-auto mb-3 rounded animate__animated animate__pulse animate__infinite" style="height: 4px; width: 150px;"></div>
-        <p class="lead text-light-50">GESTIÓN DE VEHÍCULO F1</p>
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold" th:text="${coche?.modelo} ?: 'Coche no encontrado'">Detalles</h1>
+        <p class="text-muted">Gestión de vehículo</p>
+    </div>
+
+    <div th:unless="${coche != null}" class="alert alert-danger text-center">
+        <strong>Error:</strong> No se encontró el coche solicitado.
+        <a th:href="@{/garaje}" class="btn btn-outline-danger btn-sm ms-2">Volver</a>
     </div>
 
     <div th:if="${coche != null}" class="row g-4">
 
-        <!-- Columna de Navegación Rápida -->
-        <div class="col-lg-3 animate__animated animate__fadeInLeft">
-            <div class="card card-inner-f1 shadow-2xl">
-
-                <div class="card-header bg-black text-accent-blue fw-bold d-flex justify-content-between align-items-center border-bottom border-accent-blue">
-                    <span><i class="bi bi-car-front-fill me-2"></i> COCHES EN GARAGE</span>
-                    <a th:href="@{/garaje/nuevo}" class="btn btn-sm bg-f1-red text-dark fw-bold animate__animated animate__pulse animate__infinite animate__slower">
-                        <i class="bi bi-plus-circle"></i> Nuevo
+        <div class="col-md-4 col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">Garaje</h6>
+                    <a th:href="@{/garaje/nuevo}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus"></i> Nuevo
                     </a>
                 </div>
-
-                <div class="card-body p-2">
-                    <div class="list-group list-group-flush">
-                        <div th:each="car : ${coches}"
-                             class="list-group-item list-group-item-action bg-carbon-light text-light border-bottom border-secondary d-flex justify-content-between align-items-center"
-                             th:classappend="${car.id == coche.id} ? 'active bg-f1-red text-dark fw-bold' : 'bg-carbon-light text-white'"
-                             style="transition: all 0.3s ease;">
-                            <a th:href="@{/garaje/{id}(id=${car.id})}"
-                               th:text="${car.modelo}"
-                               class="text-decoration-none flex-grow-1 p-2"
-                               th:classappend="${car.id == coche.id} ? 'text-dark fw-bold' : 'text-white'">
-                                Modelo del Coche
-                            </a>
-                            <form th:action="@{/coche/eliminar/{id}(id=${car.id})}" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-danger rounded-circle p-1 ms-2"
-                                        onclick="return confirm('¿Estás seguro de que quieres eliminar este coche? Esto es irreversible.');"
-                                        style="width: 30px; height: 30px;">
-                                    <i class="bi bi-trash fs-6"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                <div class="list-group list-group-flush">
+                    <a th:each="car : ${coches}"
+                       th:href="@{/garaje/{id}(id=${car.id})}"
+                       class="list-group-item list-group-item-action"
+                       th:classappend="${car.id == coche.id} ? 'active' : ''">
+                        <span th:text="${car.modelo}">Modelo</span>
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Columna de Contenido Principal -->
-        <div class="col-lg-9">
+        <div class="col-md-8 col-lg-9">
 
-            <!-- Sección Superior: Imagen y Resumen -->
-            <section class="mb-5 animate__animated animate__fadeInUp">
-                <div class="row g-4">
-
-                    <!-- Imagen del Coche -->
-                    <div class="col-lg-6 animate__animated animate__zoomIn">
-                        <div class="card card-inner-f1 h-100 shadow-2xl overflow-hidden position-relative">
-                            <img th:if="${coche.imagen != null}"
-                                 th:src="@{${coche.imagen}}"
-                                 class="card-img-top"
-                                 style="height: 400px; object-fit: cover; filter: brightness(0.7);"
-                                 alt="Imagen del coche"
-                                 onerror="this.onerror=null; this.src='https://placehold.co/800x400/0F0F0F/FF2A2A?text=CAR_NOT_FOUND';">
-
-                            <div class="position-absolute bottom-0 start-0 end-0 p-4"
-                                 style="background: linear-gradient(to top, var(--carbon-dark), transparent);">
-                                <h2 class="text-white fw-bold mb-0" th:text="${coche.modelo}">Modelo</h2>
-                                <p class="text-muted small">ID: <span class="text-accent-blue" th:text="${coche.id}"></span></p>
-                            </div>
-                        </div>
+            <div class="card shadow-sm mb-4">
+                <div class="row g-0">
+                    <div class="col-md-5">
+                        <img th:if="${coche.imagen != null}"
+                             th:src="@{${coche.imagen}}"
+                             class="img-fluid rounded-start h-100"
+                             style="object-fit: cover; min-height: 250px;"
+                             alt="Imagen del coche"
+                             onerror="this.onerror=null; this.src='https://placehold.co/600x400?text=Sin+Imagen';">
                     </div>
-
-                    <!-- Resumen de Atributos -->
-                    <div class="col-lg-6 animate__animated animate__fadeInRight">
-                        <div class="card card-inner-f1 h-100 shadow-2xl">
-                            <div class="card-body p-4">
-
-                                <div class="d-flex justify-content-between align-items-start mb-4 border-bottom border-f1-red pb-3">
-                                    <div>
-                                        <h2 class="card-title text-accent-blue fw-bold mb-1" th:text="${coche.modelo}">Modelo del Coche</h2>
-                                        <p class="text-white-50 mb-0" style="font-size: 0.85rem;"><i class="bi bi-info-circle"></i> ESPECIFICACIONES CLAVE</p>
-                                    </div>
-                                    <button type="button" class="btn btn-sm btn-outline-f1-red text-f1-red fw-bold animate__animated animate__pulse animate__infinite animate__slower" data-bs-toggle="modal" data-bs-target="#modalEditarCoche" style="height: fit-content;">
-                                        <i class="bi bi-pencil"></i> EDITAR
-                                    </button>
-                                </div>
-
-                                <!-- Lista de Atributos Clave -->
-                                <div class="mb-4">
-                                    <!-- PILOTO -->
-                                    <div class="info-list-item p-3 mb-3 shadow-sm animate__animated animate__fadeInUp border-opacity-25" >
-                                        <div class="d-flex align-items-center">
-                                            <span class="badge bg-f1-red text-dark me-3 fs-5"><i class="bi bi-person-fill"></i></span>
-                                            <div>
-                                                <small class="text-muted d-block fw-semibold" style="font-size: 0.7rem;">PILOTO</small>
-                                                <span class="lead fw-semibold text-white" style="font-size: 1.1rem;" th:text="${coche.piloto != null ? coche.piloto : 'SIN ASIGNAR'}"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- ESTADO GENERAL -->
-                                    <div class="info-list-item p-3 mb-3 shadow-sm animate__animated animate__fadeInUp animate__delay-1s border-opacity-25" style="border-left-color: var(--f1-red);">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="d-flex align-items-center">
-                                                <span class="badge bg-f1-red text-dark me-3 fs-5"><i class="bi bi-lightning-fill"></i></span>
-                                                <div>
-                                                    <small class="text-muted d-block fw-semibold" style="font-size: 0.7rem;">POTENCIA BASE</small>
-                                                    <span class="lead fw-semibold text-white" style="font-size: 1.1rem;"><span th:text="${coche.potencia}"></span> CV</span>
-                                                </div>
-                                            </div>
-                                            <span class="badge fs-6 px-3 py-2 animate__animated animate__pulse animate__infinite"
-                                                  th:classappend="${estadoCoche == 'OPTIMO' ? 'bg-success' : (estadoCoche == 'ADECUADO' ? 'bg-accent-blue text-dark' : 'bg-f1-red')}"
-                                                  th:text="${estadoCoche}">ESTADO</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- TOTAL DOWNFORCE (Métrica de Simulación) -->
-                                    <div class="info-list-item p-3 shadow-sm animate__animated animate__fadeInUp animate__delay-2s border-opacity-25" style="border-left-color: var(--accent-blue);">
-                                        <div class="d-flex align-items-center">
-                                            <span class="badge bg-accent-blue text-dark me-3 fs-5"><i class="bi bi-arrow-down-circle-fill"></i></span>
-                                            <div>
-                                                <small class="text-muted d-block fw-semibold" style="font-size: 0.7rem;">DOWNFORCE TOTAL</small>
-                                                <span class="lead fw-semibold text-white" style="font-size: 1.1rem;"><span th:text="${downforceTotal} ?: 'N/A'"></span> N</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div class="col-md-7">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h3 class="card-title" th:text="${coche.modelo}">Modelo</h3>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditarCoche">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </button>
                             </div>
+
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span class="text-muted">Piloto:</span>
+                                    <span class="fw-bold" th:text="${coche.piloto != null ? coche.piloto : 'Sin Asignar'}"></span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span class="text-muted">Potencia Base:</span>
+                                    <span class="fw-bold"><span th:text="${coche.potencia}"></span> CV</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span class="text-muted">Downforce Total:</span>
+                                    <span class="fw-bold"><span th:text="${downforceTotal} ?: '0'"></span> N</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0 align-items-center">
+                                    <span class="text-muted">Estado:</span>
+                                    <span class="badge"
+                                          th:classappend="${estadoCoche == 'OPTIMO' ? 'text-bg-success' : (estadoCoche == 'ADECUADO' ? 'text-bg-warning' : 'text-bg-danger')}"
+                                          th:text="${estadoCoche}">ESTADO</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <hr class="border-f1-red opacity-75 my-5 animate__animated animate__fadeIn">
+            <hr class="my-5">
 
-            <!-- Sección Componentes Instalados -->
-            <section class="mb-5 animate__animated animate__fadeInUp">
-                <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-accent-blue">
-                    <div>
-                        <h2 class="text-accent-blue mb-1 fw-bold"><i class="bi bi-tools me-2"></i> COMPONENTES INSTALADOS</h2>
-                        <p class="text-white-50 mb-0" style="font-size: 0.85rem;">Sistema de piezas que afectan a la simulación.</p>
-                    </div>
-                    <button type="button" class="btn bg-f1-red text-dark fw-bold px-4 shadow-lg animate__animated animate__pulse animate__infinite animate__slower" data-bs-toggle="modal" data-bs-target="#modalGestionarComponentes">
-                        <i class="bi bi-gear-fill me-2"></i> GESTIONAR
-                    </button>
-                </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0"><i class="bi bi-tools"></i> Componentes Instalados</h4>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalGestionarComponentes">
+                    <i class="bi bi-gear"></i> Gestionar Componentes
+                </button>
+            </div>
 
-                <div class="row g-4 justify-content-start">
-                    <div class="col-md-6 col-xl-4 animate__animated animate__zoomIn" th:each="componente, iterStat : ${componentesCoche}"
-                         th:attr="style='animation-delay: ' + ${iterStat.index * 0.1} + 's'">
-                        <div class="card card-inner-f1 h-100 shadow-lg text-start overflow-hidden border-accent-blue"
-                             style="border-width: 2px !important;"
-                             onmouseover="this.style.transform='translateY(-5px)'"
-                             onmouseout="this.style.transform='translateY(0)'">
-                            <div class="card-body p-4">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <div>
-                                        <h5 class="card-title text-f1-red fw-bold mb-1" style="font-size: 1.2rem;" th:text="${componente.nombre}">Nombre Componente</h5>
-                                        <small class="text-accent-blue fw-bold" th:text="${componente.tipo}">Tipo Componente</small>
-                                    </div>
-                                    <span class="badge bg-accent-blue text-dark fs-5 animate__animated animate__rotateIn"><i class="bi bi-nut"></i></span>
-                                </div>
-
-                                <p class="text-white-50 mb-2 fw-semibold" style="font-size: 0.85rem;">USO (Vida Útil):</p>
-                                <div class="progress mb-2 shadow" role="progressbar" style="height: 22px; background: var(--carbon-dark);">
-                                    <div class="progress-bar fw-bold animate__animated animate__slideInLeft"
-                                         th:classappend="${(componente.vecesUsado / componente.limiteUsos) * 100 >= 80 ? 'bg-danger' : ((componente.vecesUsado / componente.limiteUsos) * 100 >= 50 ? 'bg-warning text-dark' : 'bg-success')}"
-                                         th:style="'width: ' + ((${componente.vecesUsado} * 100) / ${componente.limiteUsos}) + '%'"
-                                         th:text="${componente.vecesUsado} + ' / ' + ${componente.limiteUsos}">
-                                    </div>
-                                </div>
-
-                                <p class="text-white-50 mb-2 fw-semibold" style="font-size: 0.85rem;">CONDICIÓN (Estado para Sim.):</p>
-                                <div class="progress mb-2 shadow" style="height: 22px; background: var(--carbon-dark);">
-                                    <div class="progress-bar fw-bold animate__animated animate__slideInLeft"
-                                         th:classappend="${componente.estado >= 0.8 ? 'bg-success' : (componente.estado >= 0.5 ? 'bg-warning text-dark' : 'bg-danger')}"
-                                         role="progressbar"
-                                         th:style="'width: ' + ((${componente.estado} * 100)) + '%'"
-                                         th:text="${#numbers.formatDecimal(componente.estado * 100, 0, 0)} + '%'">
-                                    </div>
-                                </div>
-                                <small class="text-muted d-block">
-                                    <i class="bi bi-heart-pulse"></i> Valor de simulación: <span th:text="${#numbers.formatDecimal(componente.estado * 100, 0, 0)} + '%'">100%</span>
-                                </small>
+            <div class="row g-3 mb-5">
+                <div class="col-md-6 col-xl-4" th:each="componente : ${componentesCoche}">
+                    <div class="card h-100 border-primary shadow-sm">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between">
+                            <small th:text="${componente.tipo}">TIPO</small>
+                            <i class="bi bi-nut"></i>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${componente.nombre}">Nombre</h5>
+                            <div class="small text-muted mb-2">
+                                Potencia: <span class="text-dark fw-bold" th:text="${componente.caballos}"></span> |
+                                Downforce: <span class="text-dark fw-bold" th:text="${componente.downforce}"></span>
                             </div>
-                            <div class="card-footer bg-black text-center border-accent-blue border-top">
-                                <a th:href="@{/almacen/componente/{id}(id=${componente.id})}" class="btn btn-outline-accent-blue btn-sm fw-bold px-4">
-                                    <i class="bi bi-box-seam"></i> Ver en Almacén
-                                </a>
+
+                            <label class="form-label small mb-1">Condición:</label>
+                            <div class="progress" role="progressbar" style="height: 10px;">
+                                <div class="progress-bar"
+                                     th:classappend="${componente.estado >= 0.5 ? 'bg-success' : 'bg-danger'}"
+                                     th:style="'width: ' + (${componente.estado} * 100) + '%'"></div>
                             </div>
+                        </div>
+                        <div class="card-footer bg-white text-end">
+                            <a th:href="@{/almacen/componente/{id}(id=${componente.id})}" class="btn btn-sm btn-link text-decoration-none">Ver ficha</a>
                         </div>
                     </div>
                 </div>
 
-                <div class="alert bg-accent-blue text-dark shadow-sm text-center mt-4 animate__animated animate__shakeX" role="alert" th:if="${#lists.isEmpty(componentesCoche)}">
-                    <strong><i class="bi bi-info-circle fs-4"></i> SIN COMPONENTES INSTALADOS</strong><br>
-                    <small>Utiliza el botón "Gestionar" para añadir piezas vitales para la simulación.</small>
+                <div class="col-12" th:if="${#lists.isEmpty(componentesCoche)}">
+                    <div class="alert alert-secondary text-center">
+                        No hay componentes instalados. Usa el botón "Gestionar" para añadir piezas.
+                    </div>
                 </div>
-            </section>
+            </div>
 
-            <hr class="border-f1-red opacity-75 my-5 animate__animated animate__fadeIn">
+            <hr class="my-5">
 
-            <!-- Sección Historial de Carreras -->
-            <section class="mb-5 animate__animated animate__fadeInUp">
-                <div class="text-center mb-4 pb-3 border-bottom border-accent-blue">
-                    <h2 class="text-f1-red fw-bold mb-2"><i class="bi bi-trophy-fill me-2"></i> HISTORIAL DE CARRERAS</h2>
-                    <p class="text-white-50 mb-0" style="font-size: 0.85rem;">Competiciones en las que ha participado el vehículo.</p>
-                </div>
-                <div class="row g-4 justify-content-center">
-                    <div class="col-md-6 col-xl-4 animate__animated animate__zoomIn" th:each="carrera, iterStat : ${carreras}"
-                         th:attr="style='animation-delay: ' + ${iterStat.index * 0.15} + 's'">
-                        <div class="card card-inner-f1 text-white h-100 shadow-lg overflow-hidden border-f1-red"
-                             style="border-width: 2px !important;"
-                             onmouseover="this.style.transform='scale(1.03)'"
-                             onmouseout="this.style.transform='scale(1)'">
-                            <div class="position-relative">
-                                <img th:src="${carrera.imagen}" class="card-img-top"
-                                     style="height: 200px; object-fit: cover; filter: brightness(0.7);"
-                                     alt="Imagen de la carrera"
-                                     onerror="this.onerror=null; this.src='https://placehold.co/800x400/0F0F0F/FF2A2A?text=CIRCUIT';">
-
-                                <div class="card-img-overlay d-flex flex-column justify-content-end p-3">
-                                    <span class="badge bg-f1-red text-dark mb-2 align-self-start px-3 py-1 rounded-pill shadow-sm fw-bold">
-                                        <i class="bi bi-calendar-event"></i> <span th:text="${#dates.format(carrera.fecha, 'dd/MM/yyyy')}"></span>
-                                    </span>
-                                    <h4 class="card-title fw-bold text-white mb-2" th:text="${carrera.nombre}" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
-                                        Nombre de la Carrera
-                                    </h4>
-                                    <a th:href="@{/carreras/{id}(id=${carrera.id})}"
-                                       class="btn bg-f1-red text-dark btn-sm fw-semibold rounded-pill px-4 align-self-start">
-                                        <i class="bi bi-flag-fill"></i> Ver Simulación
-                                    </a>
-                                </div>
-                            </div>
+            <h4 class="mb-3"><i class="bi bi-trophy"></i> Historial de Carreras</h4>
+            <div class="row g-3">
+                <div class="col-md-6 col-lg-4" th:each="carrera : ${carreras}">
+                    <div class="card h-100 shadow-sm">
+                        <img th:src="${carrera.imagen}" class="card-img-top" style="height: 150px; object-fit: cover;" alt="Carrera"
+                             onerror="this.onerror=null; this.src='https://placehold.co/600x400?text=Circuito';">
+                        <div class="card-body">
+                            <h6 class="card-title fw-bold" th:text="${carrera.nombre}">Carrera</h6>
+                            <p class="card-text small text-muted">
+                                <i class="bi bi-calendar"></i> <span th:text="${#dates.format(carrera.fecha, 'dd/MM/yyyy')}"></span>
+                            </p>
+                            <a th:href="@{/carreras/{id}(id=${carrera.id})}" class="btn btn-outline-primary btn-sm w-100">Ver Resultados</a>
                         </div>
                     </div>
                 </div>
 
-                <div class="alert alert-danger border-f1-red shadow-sm text-center mt-4 animate__animated animate__headShake" role="alert" th:if="${#lists.isEmpty(carreras)}">
-                    <strong><i class="bi bi-exclamation-triangle fs-4"></i> SIN HISTORIAL</strong><br>
-                    <small>Este coche aún no ha participado en ninguna carrera oficial.</small>
+                <div class="col-12" th:if="${#lists.isEmpty(carreras)}">
+                    <div class="alert alert-light text-center border">
+                        Este coche aún no ha competido.
+                    </div>
                 </div>
-            </section>
+            </div>
 
         </div>
     </div>
-
-    <!-- Mensaje si no hay coche seleccionado -->
-    <div th:unless="${coche != null}" class="alert alert-danger text-center animate__animated animate__shakeX">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        <strong>Error:</strong> No se encontró el coche solicitado.
-        <div class="mt-3">
-            <a th:href="@{/garaje}" class="btn bg-f1-red text-dark fw-bold">
-                <i class="bi bi-arrow-left me-2"></i> Volver al Garaje
-            </a>
-        </div>
-    </div>
-
-
 </div>
 
-<!-- MODAL EDITAR COCHE -->
-<div class="modal fade" id="modalEditarCoche" tabindex="-1" aria-labelledby="modalEditarCocheLabel" aria-hidden="true">
+<div class="modal fade" id="modalEditarCoche" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-carbon-dark border-accent-blue text-light">
-            <div class="modal-header border-accent-blue" style="background: var(--carbon-light);">
-                <h5 class="modal-title text-f1-red fw-bold" id="modalEditarCocheLabel">
-                    ✏️ EDITAR VEHÍCULO: <span th:text="${coche.modelo}" class="text-accent-blue"></span>
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Coche</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form th:action="@{/coche/editar/0/guardar}" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" th:value="${coche.id}">
 
-            <form th:action="@{/coche/editar/{id}/guardar(id=${coche.id})}" method="post" th:object="${coche}">
-
-                <div class="modal-body p-4">
-
-                    <input type="hidden" th:field="*{id}">
-
-                    <div class="mb-4">
-                        <label for="piloto" class="form-label text-white-50 fw-semibold">
-                            👤 Piloto Asignado
-                        </label>
-                        <input type="text" class="form-control bg-black text-light border-accent-blue"
-                               id="piloto" th:field="*{piloto}"
-                               placeholder="Nombre del Piloto" style="padding: 12px; border-radius: 8px;">
-                        <small class="text-muted">Deja vacío si no hay piloto asignado</small>
+                    <div class="mb-3">
+                        <label for="editPiloto" class="form-label">Piloto</label>
+                        <input type="text" class="form-control" id="editPiloto" name="piloto"
+                               th:value="${coche.piloto}" placeholder="Nombre del piloto">
                     </div>
-
-                    <div class="mb-4">
-                        <label for="modelo" class="form-label text-white fw-semibold">
-                            🏎️ Modelo del Coche
-                        </label>
-                        <input type="text" class="form-control bg-black text-light border-accent-blue"
-                               id="modelo" th:field="*{modelo}" required style="padding: 12px; border-radius: 8px;">
+                    <div class="mb-3">
+                        <label for="editImagen" class="form-label">URL Imagen</label>
+                        <input type="url" class="form-control" id="editImagen" name="imagen"
+                               th:value="${coche.imagen}" placeholder="http://...">
                     </div>
-
-                    <div class="mb-4">
-                        <label for="imagen" class="form-label text-white-50 fw-semibold">
-                            🖼️ URL de la Imagen
-                        </label>
-                        <input type="url" class="form-control bg-black text-light border-accent-blue"
-                               id="imagen" th:field="*{imagen}"
-                               placeholder="https://ejemplo.com/imagen.jpg" style="padding: 12px; border-radius: 8px;">
-                        <small class="text-muted">URL completa de la imagen del vehículo</small>
-                    </div>
-
-                    <div th:if="${#fields.hasErrors('modelo')}" class="alert alert-danger border-0" role="alert" th:errors="*{modelo}">Error en el modelo</div>
-
                 </div>
-
-                <div class="modal-footer border-accent-blue" style="background: var(--carbon-light);">
-                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">CANCELAR</button>
-                    <button type="submit" class="btn bg-f1-red text-dark fw-bold px-4">💾 GUARDAR CAMBIOS</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- MODAL GESTIONAR COMPONENTES -->
-<div class="modal fade" id="modalGestionarComponentes" tabindex="-1" aria-labelledby="modalGestionarComponentesLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content bg-carbon-dark border-f1-red text-light">
-            <div class="modal-header border-f1-red" style="background: var(--carbon-light);">
-                <div>
-                    <h5 class="modal-title text-accent-blue fw-bold mb-1" id="modalGestionarComponentesLabel">
-                        🔧 GESTIONAR COMPONENTES
-                    </h5>
-                    <small class="text-muted">Vehículo: <span th:text="${coche.modelo}" class="text-f1-red"></span></small>
-                </div>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="modal fade" id="modalGestionarComponentes" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title">Gestionar Componentes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form th:action="@{/componente/gestionar/{id}/guardar(id=${coche.id})}" method="post" id="formGestionarComponentes">
-
-                <div class="modal-body p-4">
-                    <div class="alert alert-info border-info mb-4" style="background: #004d66; color: #EAEAEA;">
-                        <strong>💡 INSTRUCCIONES:</strong> Selecciona las piezas que llevarás en la próxima simulación.
+            <form th:action="@{/componente/gestionar/{id}/guardar(id=${coche.id})}" method="post">
+                <div class="modal-body">
+                    <div class="alert alert-info py-2 small">
+                        Selecciona los componentes que quieres montar en <strong><span th:text="${coche.modelo}"></span></strong>.
                     </div>
 
-                    <div th:if="${errorComponentes}" class="alert alert-danger border-0 mb-4" role="alert" th:text="${errorComponentes}">Error de validación</div>
+                    <div th:if="${errorComponentes}" class="alert alert-danger" th:text="${errorComponentes}"></div>
 
-                    <div class="row g-3">
-                        <div class="col-md-6 col-lg-4" th:each="comp : ${componente}">
-                            <div th:if="${comp.coche == null or comp.coche.id == coche.id}"
-                                 class="form-check form-switch p-3 border border-secondary rounded shadow-sm card-inner-f1"
-                                 style="transition: all 0.3s ease;"
-                                 onmouseover="this.style.borderColor=this.querySelector('.form-check-input').checked ? 'var(--f1-red)' : 'var(--accent-blue)'"
-                                 onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.1)'">
+                    <div class="list-group">
+                        <label class="list-group-item d-flex gap-3 align-items-center justify-content-between"
+                               th:each="comp : ${componente}"
+                               style="cursor: pointer;">
 
-                                <input class="form-check-input"
+                            <div class="d-flex gap-3 align-items-center">
+                                <input class="form-check-input flex-shrink-0"
                                        type="checkbox"
-                                       role="switch"
-                                       th:id="'comp-' + ${comp.id}"
                                        name="componenteIds"
                                        th:value="${comp.id}"
-                                       th:attr="data-component-id=${comp.id}"
                                        th:checked="${comp.coche != null and comp.coche.id == coche.id}"
-                                       style="width: 3em; height: 1.5em; cursor: pointer;">
+                                       style="font-size: 1.3em;">
 
-                                <label class="form-check-label ms-2 w-100" th:for="'comp-' + ${comp.id}" style="cursor: pointer;">
-                                    <strong class="d-block mb-1 text-f1-red" th:text="${comp.nombre}" style="font-size: 1rem;">Nombre Componente</strong>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="badge bg-accent-blue text-dark" th:text="${comp.tipo}"></small>
-                                        <small class="text-muted">
-                                            <span th:text="${comp.vecesUsado}"></span>/<span th:text="${comp.limiteUsos}"></span> usos
-                                        </small>
-                                    </div>
-                                </label>
+                                <div>
+                                    <strong class="mb-0 d-block" th:text="${comp.nombre}">Nombre</strong>
+                                    <small class="text-muted" th:text="${comp.tipo} + ' | Usos: ' + ${comp.vecesUsado} + '/' + ${comp.limiteUsos}">Detalles</small>
+                                </div>
                             </div>
-                        </div>
+
+                            <span class="badge bg-secondary" th:if="${comp.coche != null and comp.coche.id != coche.id}">
+                                En otro coche
+                            </span>
+                            <span class="badge bg-success" th:if="${comp.coche != null and comp.coche.id == coche.id}">
+                                Instalado
+                            </span>
+                        </label>
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(componente)}" class="text-center py-4 text-muted">
+                        No hay componentes disponibles en el sistema.
                     </div>
 
                 </div>
-
-                <div class="modal-footer border-f1-red" style="background: var(--carbon-light);">
-                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">CANCELAR</button>
-                    <button type="submit" class="btn bg-f1-red text-dark fw-bold px-4">💾 GUARDAR CONFIGURACIÓN</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Configuración</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- MENSAJES DE ÉXITO/ERROR (Toast style) -->
-<div th:if="${exitoEdicion}" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050;">
-    <div class="alert alert-success alert-dismissible fade show shadow-lg border-0 animate__animated animate__bounceInRight" role="alert" style="min-width: 300px;">
-        <strong><i class="bi bi-check-circle-fill me-2"></i>¡Éxito!</strong>
-        <p class="mb-0" th:text="${exitoEdicion}"></p>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+<div th:if="${exitoEdicion}" class="alert alert-success alert-dismissible fade show position-fixed bottom-0 end-0 m-3 shadow" role="alert">
+    <span th:text="${exitoEdicion}">Guardado</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
-<div th:if="${errorEdicion} and ${errorEdicion != 'true'}" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050;">
-    <div class="alert alert-danger alert-dismissible fade show shadow-lg border-0 animate__animated animate__bounceInRight" role="alert" style="min-width: 300px;">
-        <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Error</strong>
-        <p class="mb-0" th:text="${errorEdicion}"></p>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-</div>
-
-<footer class="bg-black text-f1-red text-center py-4 mt-5 shadow-lg border-top border-f1-red animate__animated animate__fadeInUp">
-    <div class="container">
-        <p class="mb-0">
-            <i class="bi bi-car-front-fill me-2"></i>
-            <strong>GARAGE F1</strong> - Sistema de Gestión de Vehículos
-        </p>
-        <small class="text-muted">Powered by Bootstrap 5 & Animate.css</small>
-    </div>
-</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -493,15 +284,5 @@
     });
 </script>
 
-<script>
-    // Auto-cerrar alertas después de 5 segundos
-    setTimeout(function() {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(function(alert) {
-            const bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
-        });
-    }, 5000);
-</script>
 </body>
 </html>

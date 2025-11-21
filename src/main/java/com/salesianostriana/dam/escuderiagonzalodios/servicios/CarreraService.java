@@ -21,8 +21,8 @@ public class CarreraService {
     @Autowired
     PerformanceCoche performanceCoche;
 
-    private CarreraRepository repo;
-    private CocheRepository cocheRepo;
+    private final CarreraRepository repo;
+    private final CocheRepository cocheRepo;
 
     @Autowired
     SimuladorCarrera simulador;
@@ -32,20 +32,20 @@ public class CarreraService {
         this.cocheRepo = cocheRepo;
     }
 
-    public List<Carrera> todasCarreras(){
+    public List<Carrera> todasCarreras() {
         return repo.findAll().stream()
                 .collect(Collectors.toList());
     }
 
-    public Carrera buscarPorId(Long id){
+    public Carrera buscarPorId(Long id) {
         return repo.findById(id).orElse(null);
     }
 
-    public List<Carrera> carrerasCoche(Coche coche){
+    public List<Carrera> carrerasCoche(Coche coche) {
         return repo.findAll().stream()
-                .filter(n->n.getCoches().stream()
-                        .filter(c->c.getId() == coche.getId())
-                        .count()> 0)
+                .filter(n -> n.getCoches().stream()
+                        .filter(c -> c.getId() == coche.getId())
+                        .count() > 0)
                 .toList();
     }
 
@@ -73,7 +73,9 @@ public class CarreraService {
         return estados.values().stream().allMatch(EstadoCarreraDto::isRetirado);
     }
 
-    public Map<String, Object> correrCarrera(Long carreraId){
+
+    //Tengo un readme con lo que he hecho para generar una vuelta por si el codigo no se entiende o por si quieres leerlo :)
+    public Map<String, Object> correrCarrera(Long carreraId) {
         Carrera carrera = repo.findById(carreraId).orElseThrow();
         List<Coche> coches = new ArrayList<>(carrera.getCoches());
 
@@ -136,12 +138,10 @@ public class CarreraService {
         r.put("retirado", estado.isRetirado());
         r.put("motivoRetiro", estado.getMotivoRetiro());
         r.put("vueltasCompletadas", estado.getVueltasCompletadas());
-        r.put("tiempoTotal", estado.getTiempoTotal()); // Se mantiene para ordenación interna si hace falta
+        r.put("tiempoTotal", estado.getTiempoTotal());
 
-        // Formateo Tiempo Total (Horas)
         r.put("tiempoTotalTexto", formatearTiempoTotal(estado.getTiempoTotal()));
 
-        // Cálculo y Formateo Tiempo Promedio (Minutos)
         double promedio = 0.0;
         if (estado.getVueltasCompletadas() > 0) {
             promedio = estado.getTiempoTotal() / estado.getVueltasCompletadas();

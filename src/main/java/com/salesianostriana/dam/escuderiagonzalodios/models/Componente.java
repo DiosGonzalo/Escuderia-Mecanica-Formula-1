@@ -23,7 +23,6 @@ public class Componente {
     private long vecesUsado;
     private double estado;
     private double caballos;
-
     private double peso;
     private double downforce;
     private double drag;
